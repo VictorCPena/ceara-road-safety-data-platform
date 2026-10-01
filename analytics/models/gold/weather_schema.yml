@@ -1,0 +1,103 @@
+version: 2
+
+models:
+
+  - name: fct_accident_weather
+    description: >
+      Uma linha representa um acidente do Ceará enriquecido
+      com condições meteorológicas horárias do Open-Meteo.
+
+    columns:
+
+      - name: accident_weather_key
+        data_tests:
+          - not_null
+          - unique
+
+      - name: accident_key
+        data_tests:
+          - not_null
+          - unique
+          - relationships:
+              arguments:
+                to: ref('fct_accident')
+                field: accident_key
+
+      - name: accident_id
+        data_tests:
+          - not_null
+
+      - name: source_year
+        data_tests:
+          - not_null
+
+      - name: weather_timestamp
+        data_tests:
+          - not_null
+
+      - name: weather_time_offset_minutes
+        data_tests:
+          - not_null
+
+      - name: temperature_2m
+        data_tests:
+          - not_null
+
+      - name: relative_humidity_2m
+        data_tests:
+          - not_null
+
+      - name: precipitation
+        data_tests:
+          - not_null
+
+      - name: weather_code
+        data_tests:
+          - not_null
+
+      - name: weather_group
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - clear
+                  - mainly_clear
+                  - partly_cloudy
+                  - overcast
+                  - fog
+                  - drizzle
+                  - rain
+                  - snow
+                  - rain_showers
+                  - snow_showers
+                  - thunderstorm
+                  - unknown
+
+      - name: is_precipitating
+        data_tests:
+          - not_null
+
+
+  - name: mart_weather_road_safety
+    description: >
+      Indicadores agregados de segurança viária por
+      condição meteorológica e ano.
+
+    columns:
+
+      - name: year
+        data_tests:
+          - not_null
+
+      - name: weather_group
+        data_tests:
+          - not_null
+
+      - name: is_precipitating
+        data_tests:
+          - not_null
+
+      - name: accidents
+        data_tests:
+          - not_null

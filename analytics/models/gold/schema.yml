@@ -1,0 +1,265 @@
+version: 2
+
+models:
+
+  - name: dim_date
+    description: >
+      Dimensão de datas contendo os dias em que houve
+      acidentes registrados pela PRF no Ceará.
+
+    columns:
+
+      - name: date_key
+        data_tests:
+          - not_null
+          - unique
+
+      - name: event_date
+        data_tests:
+          - not_null
+          - unique
+
+      - name: year
+        data_tests:
+          - not_null
+
+
+  - name: dim_municipality
+    description: >
+      Dimensão territorial oficial dos municípios
+      do Ceará baseada no cadastro do IBGE.
+
+    columns:
+
+      - name: municipality_key
+        data_tests:
+          - not_null
+          - unique
+
+      - name: ibge_code
+        data_tests:
+          - not_null
+          - unique
+
+      - name: municipality
+        data_tests:
+          - not_null
+
+      - name: municipality_match_key
+        data_tests:
+          - not_null
+          - unique
+
+      - name: state
+        data_tests:
+          - not_null
+
+      - name: immediate_region
+        data_tests:
+          - not_null
+
+      - name: intermediate_region
+        data_tests:
+          - not_null
+
+
+  - name: fct_accident
+    description: >
+      Uma linha representa um acidente da PRF no Ceará.
+
+    columns:
+
+      - name: accident_key
+        data_tests:
+          - not_null
+          - unique
+
+      - name: accident_id
+        data_tests:
+          - not_null
+
+      - name: source_year
+        data_tests:
+          - not_null
+
+      - name: date_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+      - name: municipality_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_municipality')
+                field: municipality_key
+
+      - name: ibge_code
+        data_tests:
+          - not_null
+
+      - name: deaths
+        data_tests:
+          - not_null
+
+      - name: vehicles
+        data_tests:
+          - not_null
+
+
+  - name: fct_person_involvement
+
+    columns:
+
+      - name: involvement_key
+        data_tests:
+          - not_null
+          - unique
+
+      - name: accident_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('fct_accident')
+                field: accident_key
+
+      - name: accident_id
+        data_tests:
+          - not_null
+
+      - name: source_year
+        data_tests:
+          - not_null
+
+
+  - name: bridge_accident_cause
+
+    columns:
+
+      - name: accident_cause_key
+        data_tests:
+          - not_null
+          - unique
+
+      - name: accident_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('fct_accident')
+                field: accident_key
+
+      - name: accident_cause
+        data_tests:
+          - not_null
+
+      - name: is_primary_cause
+        data_tests:
+          - not_null
+
+
+  - name: bridge_accident_type
+
+    columns:
+
+      - name: accident_type_key
+        data_tests:
+          - not_null
+          - unique
+
+      - name: accident_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('fct_accident')
+                field: accident_key
+
+      - name: accident_type_order
+        data_tests:
+          - not_null
+
+      - name: accident_type
+        data_tests:
+          - not_null
+
+
+  - name: fct_municipality_population
+    description: >
+      População anual estimada pelo IBGE.
+      Uma linha representa um município em um ano.
+
+    columns:
+
+      - name: population_key
+        data_tests:
+          - not_null
+          - unique
+
+      - name: municipality_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_municipality')
+                field: municipality_key
+
+      - name: year
+        data_tests:
+          - not_null
+
+      - name: population
+        data_tests:
+          - not_null
+
+
+  - name: mart_municipality_road_safety_yearly
+    description: >
+      Indicadores anuais de segurança viária por município,
+      combinando acidentes PRF e população IBGE.
+
+    columns:
+
+      - name: municipality_year_key
+        data_tests:
+          - not_null
+          - unique
+
+      - name: municipality_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_municipality')
+                field: municipality_key
+
+      - name: year
+        data_tests:
+          - not_null
+
+      - name: population
+        data_tests:
+          - not_null
+
+      - name: accidents
+        data_tests:
+          - not_null
+
+      - name: deaths
+        data_tests:
+          - not_null
+
+      - name: year_status
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - closed_year
+                  - partial_ytd
+                  - future_year

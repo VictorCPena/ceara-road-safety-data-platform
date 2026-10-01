@@ -1,0 +1,13 @@
+ceara_road_safety:
+  target: dev
+
+  outputs:
+
+    dev:
+      type: duckdb
+
+      path: data/warehouse/ceara_road_safety.duckdb
+
+      schema: gold
+
+      threads: 4

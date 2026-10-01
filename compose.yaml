@@ -1,0 +1,19 @@
+services:
+
+  pipeline:
+
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    working_dir: /app
+
+    volumes:
+
+      - ./data:/app/data
+
+      - ./metadata:/app/metadata
+
+    environment:
+
+      PYTHONUNBUFFERED: "1"

@@ -1,0 +1,37 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# macOS
+.DS_Store
+
+# Data lake / warehouse
+data/
+metadata/
+
+# dbt runtime
+analytics/target/
+analytics/logs/
+analytics/dbt_packages/
+analytics/.user.yml
+
+# DuckDB
+*.duckdb
+*.duckdb.wal
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.temp
+*.log

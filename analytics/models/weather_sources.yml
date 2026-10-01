@@ -1,0 +1,22 @@
+version: 2
+
+sources:
+
+  - name: silver_open_meteo
+
+    description: >
+      Enriquecimento meteorológico horário dos acidentes
+      da PRF no Ceará usando Open-Meteo Historical Forecast.
+
+    tables:
+
+      - name: accident_weather
+        description: >
+          Uma linha representa as condições meteorológicas
+          modeladas mais próximas do horário de um acidente.
+
+        meta:
+          external_location: >
+            read_parquet(
+              'data/silver/open_meteo/accident_weather/year=*/part-000.parquet'
+            )

@@ -1,0 +1,17 @@
+name: "ceara_road_safety"
+version: "1.0.0"
+config-version: 2
+
+profile: "ceara_road_safety"
+
+model-paths:
+  - "models"
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  ceara_road_safety:
+    gold:
+      +materialized: table

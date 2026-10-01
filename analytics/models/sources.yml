@@ -1,0 +1,80 @@
+version: 2
+
+sources:
+
+  - name: silver_prf
+
+    description: >
+      Camada Silver da Polícia Rodoviária Federal.
+      Dados normalizados e armazenados em Parquet.
+
+    tables:
+
+      - name: occurrence
+        description: Uma linha representa um acidente.
+        meta:
+          external_location: >
+            read_parquet(
+              'data/silver/prf/occurrence/year=*/part-000.parquet'
+            )
+
+      - name: person
+        description: >
+          Uma linha representa um envolvimento
+          pessoa/veículo em um acidente.
+        meta:
+          external_location: >
+            read_parquet(
+              'data/silver/prf/person/year=*/part-000.parquet'
+            )
+
+      - name: accident_cause
+        description: >
+          Uma linha representa uma causa
+          associada a um acidente.
+        meta:
+          external_location: >
+            read_parquet(
+              'data/silver/prf/accident_cause/year=*/part-000.parquet'
+            )
+
+      - name: accident_type
+        description: >
+          Uma linha representa um tipo de acidente
+          associado a uma ordem dentro do acidente.
+        meta:
+          external_location: >
+            read_parquet(
+              'data/silver/prf/accident_type/year=*/part-000.parquet'
+            )
+
+
+  - name: silver_ibge
+
+    description: >
+      Camada Silver de dados territoriais e
+      demográficos oficiais do IBGE.
+
+    tables:
+
+      - name: municipality
+        description: >
+          Cadastro oficial dos 184 municípios do Ceará,
+          incluindo código IBGE e regiões geográficas.
+
+        meta:
+          external_location: >
+            read_parquet(
+              'data/silver/ibge/municipality/part-000.parquet'
+            )
+
+      - name: municipality_population
+        description: >
+          População municipal estimada por ano.
+          Uma linha representa um município em um ano.
+
+        meta:
+          external_location: >
+            read_parquet(
+              'data/silver/ibge/municipality_population/year=*/part-000.parquet'
+            )
