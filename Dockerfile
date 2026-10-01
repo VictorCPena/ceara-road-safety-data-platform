@@ -19,7 +19,6 @@ RUN python -m pip install --upgrade pip \
 
 COPY src ./src
 COPY analytics ./analytics
-COPY tests ./tests
 COPY scripts ./scripts
 COPY README.md .
 
