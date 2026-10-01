@@ -8,27 +8,32 @@ on:
   pull_request:
 
 jobs:
-
   validate:
-
     name: Validate Data Platform
 
     runs-on: ubuntu-latest
 
-    steps:
+    env:
+      DATA_DIR: ./.ci/data
+      METADATA_DIR: ./.ci/metadata
 
+    steps:
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      - name: Prepare runtime directories
+      - name: Prepare isolated fixture runtime
         run: |
-          mkdir -p data
-          mkdir -p metadata
+          rm -rf .ci
 
-      - name: Show Docker versions
+          mkdir -p .ci/data
+          mkdir -p .ci/data/warehouse
+          mkdir -p .ci/metadata
+
+          cp -R tests/fixtures/silver .ci/data/silver
+
+      - name: Show fixture structure
         run: |
-          docker --version
-          docker compose version
+          find .ci/data/silver -type f | sort
 
       - name: Validate Docker Compose
         run: |
@@ -43,9 +48,9 @@ jobs:
           docker compose run --rm pipeline \
             python -m compileall -q src
 
-      - name: Validate dbt project
+      - name: Run dbt build against fixture data
         run: |
           docker compose run --rm pipeline \
-            dbt parse \
+            dbt build \
             --project-dir analytics \
             --profiles-dir analytics

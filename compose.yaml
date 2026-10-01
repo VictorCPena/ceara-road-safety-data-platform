@@ -1,7 +1,5 @@
 services:
-
   pipeline:
-
     build:
       context: .
       dockerfile: Dockerfile
@@ -9,11 +7,8 @@ services:
     working_dir: /app
 
     volumes:
-
-      - ./data:/app/data
-
-      - ./metadata:/app/metadata
+      - ${DATA_DIR:-./data}:/app/data
+      - ${METADATA_DIR:-./metadata}:/app/metadata
 
     environment:
-
       PYTHONUNBUFFERED: "1"

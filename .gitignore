@@ -35,3 +35,6 @@ analytics/.user.yml
 *.tmp
 *.temp
 *.log
+
+# CI runtime
+.ci/
