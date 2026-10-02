@@ -1,4 +1,53 @@
+x-airflow-common: &airflow-common
+  image: ceara-road-safety-airflow:3.3.2
+
+  build:
+    context: .
+    dockerfile: Dockerfile.airflow
+
+  working_dir: /app
+
+  environment: &airflow-common-environment
+    AIRFLOW_HOME: /opt/airflow/runtime
+
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__CORE__PARALLELISM: "4"
+    AIRFLOW__CORE__MAX_ACTIVE_TASKS_PER_DAG: "4"
+    AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+    AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+
+    AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_USERS: "admin:admin"
+
+    # Airflow 3: tasks conversam com a Execution API.
+    AIRFLOW__CORE__EXECUTION_API_SERVER_URL: "http://airflow-api-server:8080/execution/"
+
+    # Metadata DB
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: "postgresql+psycopg2://airflow:airflow@postgres:5432/airflow"
+
+    # Segredos locais/dev
+    AIRFLOW__API_AUTH__JWT_SECRET: "ceara-road-safety-local-jwt-secret"
+    AIRFLOW__API__SECRET_KEY: "ceara-road-safety-local-api-secret"
+
+    AIRFLOW__API__BASE_URL: "http://localhost:8080"
+
+    AIRFLOW__LOGGING__BASE_LOG_FOLDER: "/opt/airflow/runtime/logs"
+
+    PYTHONPATH: "/app"
+    PYTHONUNBUFFERED: "1"
+
+  volumes:
+    - ${DATA_DIR:-./data}:/app/data
+    - ${METADATA_DIR:-./metadata}:/app/metadata
+    - ./orchestration/dags:/opt/airflow/dags
+    - airflow_runtime:/opt/airflow/runtime
+
+
 services:
+
+  # ============================================================
+  # DATA PIPELINE
+  # ============================================================
+
   pipeline:
     build:
       context: .
@@ -12,3 +61,174 @@ services:
 
     environment:
       PYTHONUNBUFFERED: "1"
+
+
+  # ============================================================
+  # AIRFLOW METADATA DATABASE
+  # ============================================================
+
+  postgres:
+    image: postgres:17
+
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+
+    volumes:
+      - airflow_postgres:/var/lib/postgresql/data
+
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U airflow -d airflow
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+    restart: unless-stopped
+
+
+  # ============================================================
+  # DATABASE INITIALIZATION
+  # ============================================================
+
+  airflow-init:
+    <<: *airflow-common
+
+    command:
+      - airflow
+      - db
+      - migrate
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    restart: "no"
+
+
+  # ============================================================
+  # API SERVER + UI + EXECUTION API
+  # ============================================================
+
+  airflow-api-server:
+    <<: *airflow-common
+
+    command:
+      - airflow
+      - api-server
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8080"
+
+    ports:
+      - "8080:8080"
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+      airflow-init:
+        condition: service_completed_successfully
+
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - python -c "import urllib.request; urllib.request.urlopen('http://localhost:8080/api/v2/monitor/health', timeout=5)"
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 20s
+
+    restart: unless-stopped
+
+
+  # ============================================================
+  # SCHEDULER
+  # ============================================================
+
+  airflow-scheduler:
+    <<: *airflow-common
+
+    command:
+      - airflow
+      - scheduler
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+      airflow-init:
+        condition: service_completed_successfully
+
+      airflow-api-server:
+        condition: service_healthy
+
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - airflow jobs check --job-type SchedulerJob --local
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+
+    restart: unless-stopped
+
+
+  # ============================================================
+  # DAG PROCESSOR
+  # ============================================================
+
+  airflow-dag-processor:
+    <<: *airflow-common
+
+    command:
+      - airflow
+      - dag-processor
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+      airflow-init:
+        condition: service_completed_successfully
+
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - airflow jobs check --job-type DagFileProcessorJob --local
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+
+    restart: unless-stopped
+
+
+  # ============================================================
+  # TRIGGERER
+  # ============================================================
+
+  airflow-triggerer:
+    <<: *airflow-common
+
+    command:
+      - airflow
+      - triggerer
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+      airflow-init:
+        condition: service_completed_successfully
+
+    restart: unless-stopped
+
+
+volumes:
+  airflow_postgres:
+  airflow_runtime:

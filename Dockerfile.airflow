@@ -1,0 +1,16 @@
+FROM apache/airflow:3.3.2-python3.13
+
+COPY requirements.txt /tmp/project-requirements.txt
+
+RUN python -m venv /opt/airflow/project-venv \
+    && /opt/airflow/project-venv/bin/pip install --no-cache-dir \
+       -r /tmp/project-requirements.txt
+
+WORKDIR /app
+
+COPY --chown=airflow:root src ./src
+COPY --chown=airflow:root analytics ./analytics
+COPY --chown=airflow:root scripts ./scripts
+COPY --chown=airflow:root README.md .
+
+ENV PYTHONPATH=/app

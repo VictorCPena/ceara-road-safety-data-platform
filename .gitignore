@@ -38,3 +38,6 @@ analytics/.user.yml
 
 # CI runtime
 .ci/
+
+# Airflow local runtime
+.airflow/
