@@ -1,0 +1,53 @@
+version: 2
+
+models:
+
+  - name: mart_vehicle_make_model_safety
+    description: >
+      Vehicle safety indicators by normalized manufacturer and model.
+    columns:
+      - name: year
+        data_tests:
+          - not_null
+      - name: vehicle_make
+        data_tests:
+          - not_null
+      - name: vehicle_model
+        data_tests:
+          - not_null
+      - name: vehicles_involved
+        data_tests:
+          - not_null
+
+  - name: mart_accident_map
+    description: >
+      Accident-level map mart with explicit coordinate-quality classification.
+    columns:
+      - name: accident_key
+        data_tests:
+          - not_null
+          - unique
+      - name: coordinate_quality
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - valid
+                  - missing
+                  - invalid_global
+                  - outside_ceara_bounds
+
+  - name: mart_weather_road_safety_pt
+    description: >
+      Portuguese presentation layer over the canonical weather mart.
+    columns:
+      - name: year
+        data_tests:
+          - not_null
+      - name: weather_group_label
+        data_tests:
+          - not_null
+      - name: precipitation_label
+        data_tests:
+          - not_null

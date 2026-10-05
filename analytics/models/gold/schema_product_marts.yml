@@ -1,0 +1,103 @@
+version: 2
+
+models:
+
+  - name: fct_vehicle_involvement
+    description: >
+      One row per identifiable vehicle per accident, deduplicated from
+      person-level involvement records.
+    columns:
+      - name: vehicle_involvement_key
+        data_tests:
+          - not_null
+          - unique
+      - name: accident_key
+        data_tests:
+          - not_null
+      - name: vehicle_id
+        data_tests:
+          - not_null
+      - name: occupants
+        data_tests:
+          - not_null
+
+  - name: mart_vehicle_road_safety
+    description: >
+      Annual road-safety indicators grouped by vehicle type.
+    columns:
+      - name: year
+        data_tests:
+          - not_null
+      - name: vehicle_type
+        data_tests:
+          - not_null
+      - name: vehicles_involved
+        data_tests:
+          - not_null
+
+  - name: mart_accident_time_patterns
+    description: >
+      Accident indicators by municipality, month, weekday, hour and day phase.
+    columns:
+      - name: year
+        data_tests:
+          - not_null
+      - name: hour
+        data_tests:
+          - not_null
+      - name: accidents
+        data_tests:
+          - not_null
+
+  - name: mart_highway_safety
+    description: >
+      Annual accident and severity indicators by federal highway.
+    columns:
+      - name: year
+        data_tests:
+          - not_null
+      - name: highway
+        data_tests:
+          - not_null
+      - name: accidents
+        data_tests:
+          - not_null
+
+  - name: mart_highway_segment_safety
+    description: >
+      Road-safety indicators for 10-km highway segments, retaining municipality
+      and approximate segment center coordinates.
+    columns:
+      - name: year
+        data_tests:
+          - not_null
+      - name: highway
+        data_tests:
+          - not_null
+      - name: segment_start_km
+        data_tests:
+          - not_null
+      - name: segment_end_km
+        data_tests:
+          - not_null
+      - name: accidents
+        data_tests:
+          - not_null
+
+  - name: mart_accident_cause_type
+    description: >
+      Cross-analysis of accident causes and accident types. Each accident can
+      contribute to multiple cause-type combinations.
+    columns:
+      - name: year
+        data_tests:
+          - not_null
+      - name: accident_cause
+        data_tests:
+          - not_null
+      - name: accident_type
+        data_tests:
+          - not_null
+      - name: accidents
+        data_tests:
+          - not_null
