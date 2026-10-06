@@ -3,7 +3,23 @@
 select
     year,
     weather_group,
-    {{ weather_group_pt('weather_group') }} as weather_group_label,
+
+    case lower(weather_group)
+        when 'clear' then 'Céu limpo'
+        when 'mainly_clear' then 'Predominantemente limpo'
+        when 'partly_cloudy' then 'Parcialmente nublado'
+        when 'overcast' then 'Nublado'
+        when 'fog' then 'Neblina'
+        when 'drizzle' then 'Garoa'
+        when 'rain' then 'Chuva'
+        when 'snow' then 'Neve'
+        when 'rain_showers' then 'Pancadas de chuva'
+        when 'snow_showers' then 'Pancadas de neve'
+        when 'thunderstorm' then 'Tempestade'
+        when 'unknown' then 'Não informado'
+        else coalesce(weather_group, 'Não informado')
+    end as weather_group_label,
+
     is_precipitating,
 
     case

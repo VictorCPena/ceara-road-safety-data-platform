@@ -8,8 +8,72 @@ with person_vehicle as (
         source_year,
         vehicle_id,
 
-        max({{ normalize_missing_text('vehicle_type') }}) as vehicle_type_raw,
-        max({{ normalize_missing_text('vehicle_brand') }}) as vehicle_make_model_raw,
+        max(
+            case
+                when vehicle_type is null then null
+                when lower(trim(cast(vehicle_type as varchar))) in (
+                    '',
+                    'null',
+                    'none',
+                    'nan',
+                    'n/a',
+                    'na',
+                    'não informado',
+                    'nao informado',
+                    'não informada',
+                    'nao informada',
+                    'ignorado',
+                    'ignorada',
+                    'desconhecido',
+                    'desconhecida',
+                    'unknown',
+                    'not informed',
+                    'não se aplica',
+                    'nao se aplica'
+                ) then null
+                else trim(regexp_replace(
+                    cast(vehicle_type as varchar),
+                    '[[:space:]]+',
+                    ' ',
+                    'g'
+                ))
+            end
+        ) as vehicle_type_raw,
+
+        max(
+            case
+                when vehicle_brand is null then null
+                when lower(trim(cast(vehicle_brand as varchar))) in (
+                    '',
+                    'null',
+                    'none',
+                    'nan',
+                    'n/a',
+                    'na',
+                    'não informado',
+                    'nao informado',
+                    'não informada',
+                    'nao informada',
+                    'ignorado',
+                    'ignorada',
+                    'desconhecido',
+                    'desconhecida',
+                    'unknown',
+                    'not informed',
+                    'não se aplica',
+                    'nao se aplica',
+                    'não informado/não informado',
+                    'nao informado/nao informado'
+                ) then null
+                else trim(regexp_replace(
+                    cast(vehicle_brand as varchar),
+                    '[[:space:]]+',
+                    ' ',
+                    'g'
+                ))
+            end
+        ) as vehicle_make_model_raw,
+
         max(vehicle_manufacture_year) as vehicle_manufacture_year,
 
         count(*) as occupants,
@@ -38,17 +102,17 @@ split_make_model as (
         case
             when vehicle_make_model_raw is null then null
             when strpos(vehicle_make_model_raw, '/') > 0
-                then split_part(vehicle_make_model_raw, '/', 1)
-            else vehicle_make_model_raw
+                then trim(split_part(vehicle_make_model_raw, '/', 1))
+            else trim(vehicle_make_model_raw)
         end as vehicle_make_candidate,
 
         case
             when vehicle_make_model_raw is null then null
             when strpos(vehicle_make_model_raw, '/') > 0
-                then substr(
+                then trim(substr(
                     vehicle_make_model_raw,
                     strpos(vehicle_make_model_raw, '/') + 1
-                )
+                ))
             else null
         end as vehicle_model_candidate
 
@@ -60,11 +124,39 @@ cleaned as (
     select
         *,
 
-        {{ normalize_missing_text('vehicle_make_candidate') }}
-            as vehicle_make_raw,
+        case
+            when vehicle_make_candidate is null then null
+            when lower(vehicle_make_candidate) in (
+                '',
+                'null',
+                'none',
+                'nan',
+                'n/a',
+                'na',
+                'não informado',
+                'nao informado',
+                'unknown',
+                'not informed'
+            ) then null
+            else vehicle_make_candidate
+        end as vehicle_make_raw,
 
-        {{ normalize_missing_text('vehicle_model_candidate') }}
-            as vehicle_model_raw
+        case
+            when vehicle_model_candidate is null then null
+            when lower(vehicle_model_candidate) in (
+                '',
+                'null',
+                'none',
+                'nan',
+                'n/a',
+                'na',
+                'não informado',
+                'nao informado',
+                'unknown',
+                'not informed'
+            ) then null
+            else vehicle_model_candidate
+        end as vehicle_model_raw
 
     from split_make_model
 ),
@@ -74,8 +166,31 @@ normalized as (
     select
         *,
 
-        {{ normalize_vehicle_make('vehicle_make_raw') }}
-            as vehicle_make,
+        case upper(vehicle_make_raw)
+            when 'VW' then 'Volkswagen'
+            when 'VOLKSWAGEN' then 'Volkswagen'
+            when 'GM' then 'Chevrolet'
+            when 'CHEVROLET' then 'Chevrolet'
+            when 'M.BENZ' then 'Mercedes-Benz'
+            when 'MERCEDES-BENZ' then 'Mercedes-Benz'
+            when 'MERCEDES BENZ' then 'Mercedes-Benz'
+            when 'HONDA' then 'Honda'
+            when 'YAMAHA' then 'Yamaha'
+            when 'FIAT' then 'Fiat'
+            when 'FORD' then 'Ford'
+            when 'TOYOTA' then 'Toyota'
+            when 'RENAULT' then 'Renault'
+            when 'VOLVO' then 'Volvo'
+            when 'SCANIA' then 'Scania'
+            when 'HYUNDAI' then 'Hyundai'
+            when 'NISSAN' then 'Nissan'
+            when 'JEEP' then 'Jeep'
+            when 'PEUGEOT' then 'Peugeot'
+            when 'CITROEN' then 'Citroën'
+            when 'CITROËN' then 'Citroën'
+            when 'KIA' then 'Kia'
+            else vehicle_make_raw
+        end as vehicle_make,
 
         case
             when vehicle_model_raw is null then null
@@ -107,7 +222,6 @@ final as (
         vehicle_id,
 
         vehicle_type,
-
         vehicle_make_model_raw,
 
         coalesce(vehicle_make, 'Não informado') as vehicle_make,
