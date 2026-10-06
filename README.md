@@ -1,435 +1,427 @@
 # Ceará Road Safety Data Platform
 
-End-to-end **Data Engineering platform for road safety analysis in Ceará, Brazil**, integrating public data from **PRF**, **IBGE**, and **Open-Meteo**.
+[![CI](https://github.com/VictorCPena/ceara-road-safety-data-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/VictorCPena/ceara-road-safety-data-platform/actions/workflows/ci.yml)
 
-The project implements a complete data lifecycle from ingestion and raw storage to analytical modeling, data quality validation, orchestration, and automated CI.
+End-to-end data engineering and analytics platform for road-safety intelligence in Ceará, Brazil.
 
-## Overview
+The project ingests public road-accident data from the Brazilian Federal Highway Police (PRF), enriches it with municipality and population data from IBGE and historical weather data from Open-Meteo, validates and models the data through a Bronze → Silver → Gold architecture, orchestrates the workflow with Apache Airflow, and exposes the analytical layer through the **Observatório Viário CE** Streamlit application.
 
-The platform was designed to answer road-safety questions using reproducible and auditable data pipelines.
+---
 
-It combines:
+## What this project answers
 
-- Brazilian Federal Highway Police accident data;
-- official municipality and population data from IBGE;
-- historical weather data from Open-Meteo;
-- dimensional and analytical models built with dbt;
-- orchestration with Apache Airflow;
-- automated validation with GitHub Actions.
+The platform is designed to support questions such as:
 
-The architecture follows a **Bronze → Silver → Gold** approach.
+- Which municipalities concentrate the highest number of accidents, deaths, and severe injuries?
+- How do municipalities compare after adjusting for population?
+- Which federal highways and 10 km road segments concentrate the most severe events?
+- At what hours and days of the week are accidents more frequent?
+- Which causes and accident types appear most often together?
+- What profiles of people and vehicles are most frequently involved?
+- How do observed weather conditions relate to accident occurrence and severity?
+- Where are the main spatial hotspots in Ceará?
 
-```mermaid
-flowchart LR
-
-    subgraph Sources["Data Sources"]
-        PRF["PRF<br/>Road Accidents"]
-        IBGE["IBGE<br/>Municipalities & Population"]
-        WEATHER["Open-Meteo<br/>Historical Weather"]
-    end
-
-    subgraph Bronze["Bronze Layer"]
-        B_PRF["Raw PRF Snapshots"]
-        B_IBGE["Raw IBGE Data"]
-        B_WEATHER["Raw Weather Data"]
-    end
-
-    subgraph Silver["Silver Layer"]
-        S_OCC["Occurrences"]
-        S_PERSON["People Involved"]
-        S_CAUSE["Accident Causes"]
-        S_TYPE["Accident Types"]
-        S_MUN["Municipalities"]
-        S_POP["Population"]
-        S_WEATHER["Accident Weather"]
-    end
-
-    subgraph Quality["Data Quality"]
-        Q_PRF["PRF Checks"]
-        Q_IBGE["IBGE Checks"]
-        Q_MATCH["PRF × IBGE Match"]
-        Q_WEATHER["Weather Checks"]
-    end
-
-    subgraph Gold["Gold Layer - dbt"]
-        DIM_DATE["dim_date"]
-        DIM_MUN["dim_municipality"]
-
-        FCT_ACC["fct_accident"]
-        FCT_PERSON["fct_person_involvement"]
-        FCT_POP["fct_municipality_population"]
-        FCT_WEATHER["fct_accident_weather"]
-
-        BR_CAUSE["bridge_accident_cause"]
-        BR_TYPE["bridge_accident_type"]
-
-        MART_MUN["mart_municipality_road_safety_yearly"]
-        MART_WEATHER["mart_weather_road_safety"]
-    end
-
-    PRF --> B_PRF
-    IBGE --> B_IBGE
-
-    B_PRF --> S_OCC
-    B_PRF --> S_PERSON
-    B_PRF --> S_CAUSE
-    B_PRF --> S_TYPE
-
-    B_IBGE --> S_MUN
-    B_IBGE --> S_POP
-
-    S_OCC --> WEATHER
-    WEATHER --> B_WEATHER
-    B_WEATHER --> S_WEATHER
-
-    S_OCC --> Q_PRF
-    S_PERSON --> Q_PRF
-    S_CAUSE --> Q_PRF
-    S_TYPE --> Q_PRF
-
-    S_MUN --> Q_IBGE
-    S_POP --> Q_IBGE
-
-    Q_PRF --> Q_MATCH
-    Q_IBGE --> Q_MATCH
-    S_WEATHER --> Q_WEATHER
-
-    Q_PRF --> Gold
-    Q_IBGE --> Gold
-    Q_MATCH --> Gold
-    Q_WEATHER --> Gold
-```
-
-Apache Airflow orchestrates the ingestion, transformation, validation, weather enrichment, and dbt stages.
+The analysis is descriptive and exploratory. It does not infer causal risk without an appropriate exposure denominator.
 
 ---
 
 ## Architecture
 
-### Bronze
-
-The Bronze layer preserves data as close as possible to the original source.
-
-PRF ingestion uses immutable snapshots and records metadata including:
-
-- source;
-- dataset;
-- year;
-- ingestion timestamp;
-- file path;
-- file size;
-- SHA-256 checksum;
-- ingestion status.
-
-Content-based idempotency prevents the same source file from being stored multiple times.
-
-Example:
-
 ```text
-data/bronze/prf/
-└── year=2026/
-    └── dataset=occurrence/
-        └── snapshot=YYYYMMDDTHHMMSSZ/
-            └── datatran2026.zip
+PRF / IBGE / Open-Meteo
+          │
+          ▼
+┌──────────────────────────┐
+│          Bronze          │
+│ immutable raw snapshots  │
+│ checksum + manifest      │
+└────────────┬─────────────┘
+             │
+             ▼
+┌──────────────────────────┐
+│          Silver          │
+│ typed / cleaned data     │
+│ canonical entities       │
+└────────────┬─────────────┘
+             │
+             ▼
+┌──────────────────────────┐
+│      Quality Gates       │
+│ schema / coverage /      │
+│ integrity validation     │
+└────────────┬─────────────┘
+             │
+             ▼
+┌──────────────────────────┐
+│           Gold           │
+│      DuckDB + dbt        │
+│ facts / dimensions /     │
+│ analytical marts         │
+└────────────┬─────────────┘
+             │
+       ┌─────┴─────┐
+       ▼           ▼
+ Apache Airflow   Observatório
+ orchestration    Viário CE
+                  Streamlit
 ```
 
 ---
 
-### Silver
+## Current validation status
 
-The Silver layer contains typed, normalized, and validated datasets.
+The current dbt project contains:
 
-Main datasets:
+| Metric | Current status |
+|---|---:|
+| dbt models | 19 |
+| dbt data tests | 128 |
+| dbt build nodes | 147 |
+| CI jobs | Data Platform + Airflow |
+| CI runner | Ubuntu 24.04 |
+
+The latest validated build completes with all dbt nodes passing.
+
+---
+
+## Data coverage
+
+### PRF
+
+The ingestion layer currently processes PRF public datasets for:
+
+- 2024
+- 2025
+- 2026
+
+Raw records processed:
+
+- **194,443 accident occurrences**
+- **523,621 person-involvement records**
+
+For Ceará, the analytical layer currently contains:
+
+- **3,559 accidents**
+- **184 IBGE municipalities**
+- municipality matching between PRF and IBGE
+- weather enrichment for georeferenced Ceará accidents
+
+> 2026 is a partial year in the current dataset and must not be compared with full years without considering the observation window.
+
+### IBGE
+
+IBGE is used for:
+
+- municipality identifiers
+- municipality names
+- regional metadata
+- population
+- municipal GeoJSON boundaries
+
+### Open-Meteo
+
+Open-Meteo is used to enrich accident events with historical weather information such as:
+
+- temperature
+- relative humidity
+- precipitation
+- visibility
+- wind speed
+- weather classification
+
+---
+
+## Gold analytical layer
+
+The Gold layer is built with dbt on DuckDB.
+
+### Core dimensions and facts
+
+- `dim_date`
+- `dim_municipality`
+- `fct_accident`
+- `fct_person_involvement`
+- `fct_vehicle_involvement`
+- `fct_municipality_population`
+- `fct_accident_weather`
+- `bridge_accident_cause`
+- `bridge_accident_type`
+
+### Analytical marts
+
+- `mart_municipality_road_safety_yearly`
+- `mart_weather_road_safety`
+- `mart_weather_road_safety_pt`
+- `mart_accident_time_patterns`
+- `mart_highway_safety`
+- `mart_highway_segment_safety`
+- `mart_accident_cause_type`
+- `mart_vehicle_road_safety`
+- `mart_vehicle_make_model_safety`
+- `mart_accident_map`
+
+These marts move analytical logic out of the presentation layer and make the dashboard consume curated business-ready datasets.
+
+---
+
+## Observatório Viário CE
+
+The repository includes a Streamlit analytical product called **Observatório Viário CE**.
+
+The interface is organized into five areas.
+
+### 1. Visão geral
+
+Executive view with:
+
+- accident KPIs
+- deaths and severe injuries
+- annual evolution
+- vector map
+- major signals in the selected slice
+
+### 2. Território
+
+Combines spatial analyses that were previously separated:
+
+- municipal choropleth
+- municipality comparison
+- population-adjusted rates
+- federal-highway ranking
+- critical 10 km highway segments
+- spatial hotspots
+
+The map uses a local Ceará municipal GeoJSON and Altair/Vega-Lite rather than depending on external tile services.
+
+### 3. Ocorrências
+
+Focuses on how and when accidents happen:
+
+- accident causes
+- accident types
+- cause × type combinations
+- day phase
+- hour × weekday patterns
+- weather conditions
+- precipitation context
+
+### 4. Envolvidos
+
+Profiles people and vehicles:
+
+- sex
+- age groups
+- person type
+- physical condition
+- vehicle type
+- manufacturer
+- model
+- vehicle age
+- deaths and serious injuries by vehicle type
+
+Vehicle manufacturer/model data is normalized before presentation and missing values remain traceable instead of being silently discarded.
+
+### 5. Dados & metodologia
+
+Documents:
+
+- sources
+- architecture
+- limitations
+- analytical assumptions
+- technology stack
+
+---
+
+## Vector map
+
+The map layer is designed as a lightweight analytical visualization rather than a generic web map.
 
 ```text
-PRF
-├── occurrence
-├── person
-├── accident_cause
-└── accident_type
-
-IBGE
-├── municipality
-└── municipality_population
-
-Open-Meteo
-└── accident_weather
+IBGE Ceará GeoJSON
+       +
+Gold analytical data
+       │
+       ▼
+join by ibge_code
+       │
+       ▼
+Altair / Vega-Lite
+├── municipal choropleth
+├── highway-segment hotspots
+└── optional individual accidents
 ```
 
-PRF accident data remains **Brazil-wide in Silver**.
-
-The Ceará-specific analytical scope is applied downstream, keeping the reusable standardized dataset independent from the analytical use case.
-
-The `person_all_causes` PRF dataset is decomposed into separate accident-level cause and type structures instead of preserving the original person-level Cartesian representation.
-
----
-
-## Data Quality
-
-Data quality checks run before analytical models are produced.
-
-Examples include:
-
-- uniqueness constraints;
-- required fields;
-- valid age ranges;
-- valid municipality keys;
-- municipality matching between PRF and IBGE;
-- population completeness;
-- non-negative metrics;
-- weather coverage;
-- weather observation proximity to accident time;
-- referential integrity;
-- one primary cause per accident;
-- accident type ordering.
-
-dbt currently executes:
+The municipal geometry is stored locally at:
 
 ```text
-10 analytical models
-87 data tests
-97 successful dbt nodes/tests
+dashboard/assets/ceara_municipalities.geojson
 ```
 
-A successful build finishes with:
+If it needs to be regenerated:
+
+```bash
+python scripts/download_ceara_geojson.py
+```
+
+---
+
+## Vehicle normalization
+
+PRF source data can contain manufacturer and model in the same raw value, for example:
 
 ```text
-PASS=97
-WARN=0
-ERROR=0
-SKIP=0
+HONDA/CG 160 FAN
+VW/GOL 1.0
 ```
 
----
-
-## Analytical Models
-
-The Gold layer is built with **dbt + DuckDB**.
-
-### Dimensions
-
-#### `dim_date`
-
-Calendar dimension used by accident facts.
-
-#### `dim_municipality`
-
-Canonical Ceará municipality dimension based on IBGE identifiers.
-
----
-
-### Facts
-
-#### `fct_accident`
-
-One record per road accident.
-
-Includes:
-
-- accident identifier;
-- date;
-- municipality;
-- geographic information;
-- deaths;
-- injuries;
-- vehicles;
-- road characteristics.
-
-#### `fct_person_involvement`
-
-People involved in accidents with normalized person, vehicle, demographic, and physical-state information.
-
-#### `fct_municipality_population`
-
-Annual official population estimates by municipality.
-
-#### `fct_accident_weather`
-
-Weather conditions associated with each Ceará accident.
-
----
-
-### Bridges
-
-#### `bridge_accident_cause`
-
-Supports accidents associated with multiple causes while preserving the primary-cause indicator.
-
-#### `bridge_accident_type`
-
-Supports accidents associated with multiple accident types and their original ordering.
-
----
-
-### Analytical Marts
-
-#### `mart_municipality_road_safety_yearly`
-
-Municipality × year analytical dataset combining:
-
-- population;
-- accidents;
-- deaths;
-- injuries;
-- road-safety rates;
-- data-period status.
-
-The model preserves all:
+The Gold layer separates and normalizes them into:
 
 ```text
-184 Ceará municipalities × 3 years = 552 rows
+vehicle_make   vehicle_model
+Honda          CG 160 FAN
+Volkswagen     GOL 1.0
 ```
 
-even when a municipality has zero recorded accidents.
-
-#### `mart_weather_road_safety`
-
-Aggregates road-safety outcomes by derived weather conditions.
+Unknown values remain represented as missing data and are excluded only from rankings where treating them as a manufacturer/model would be misleading.
 
 ---
 
-## Weather Enrichment
+## Data-quality strategy
 
-Accidents in Ceará are enriched using Open-Meteo historical weather data.
+Quality checks cover multiple levels.
 
-The pipeline retrieves hourly variables such as:
+### Dimensional integrity
 
-- temperature;
-- relative humidity;
-- precipitation;
-- rain;
-- weather code;
-- cloud cover;
-- visibility;
-- wind speed;
-- wind gusts.
+Examples:
 
-Weather observations are matched to accident timestamps and validated to remain within an acceptable temporal distance.
+- municipality key relationships
+- unique accident keys
+- unique involvement keys
+- unique population keys
 
-PRF's reported weather condition is preserved separately from Open-Meteo model-derived weather information.
+### Domain validation
 
-This avoids treating the two sources as equivalent measurements.
+Examples:
+
+- valid weather groups
+- valid year status
+- valid temporal ranges
+- valid highway-segment boundaries
+- reasonable vehicle ages
+
+### Coverage validation
+
+Examples:
+
+- municipality matching
+- accident-weather coverage
+- map coordinate quality
+
+### Analytical validation
+
+Examples:
+
+- non-negative metrics
+- one primary cause per accident
+- accident-type ordering
+- municipality-year row expectations
 
 ---
 
 ## Orchestration
 
-The full pipeline is orchestrated with **Apache Airflow 3**.
+Apache Airflow orchestrates the end-to-end data workflow.
 
-Local Airflow architecture:
+Current local architecture:
 
 ```text
 PostgreSQL
     │
-    ├── API Server
-    ├── Scheduler
-    ├── DAG Processor
-    └── Triggerer
-           │
-           ▼
-      LocalExecutor
-           │
-           ▼
+    ▼
+Airflow
+├── API Server
+├── Scheduler
+├── DAG Processor
+└── Triggerer
+    │
+    ▼
+Extraction → Silver → Quality → dbt Gold
+```
+
+The main DAG is:
+
+```text
 ceara_road_safety_full_pipeline
 ```
 
-The DAG coordinates:
-
-```text
-start
-│
-├── PRF
-│   ├── ingestion
-│   ├── occurrence transformation
-│   ├── person transformation
-│   ├── cause/type transformation
-│   └── quality gates
-│
-├── IBGE
-│   ├── municipality ingestion
-│   ├── population ingestion
-│   ├── transformations
-│   └── quality gates
-│
-├── PRF × IBGE municipality validation
-│
-├── Open-Meteo
-│   ├── ingestion
-│   ├── transformation
-│   └── quality gate
-│
-├── dbt build
-│
-└── pipeline completed
-```
-
-Memory-intensive transformations use an Airflow pool:
-
-```text
-heavy_etl = 1 slot
-```
-
-This preserves logical task independence while preventing several memory-heavy ETL operations from competing for resources simultaneously.
+Heavy ETL work is constrained through an Airflow pool to avoid local resource exhaustion.
 
 ---
 
-## Continuous Integration
+## Continuous integration
 
-GitHub Actions validates both the data platform and Airflow orchestration on every push to `main` and on pull requests.
+GitHub Actions validates both the data platform and Airflow environment.
 
-The workflow contains two independent jobs:
+The workflow performs checks such as:
 
-```text
-Validate Data Platform
-├── validate Docker Compose
-├── build pipeline image
-├── compile Python
-├── load deterministic fixtures
-├── dbt build
-└── run 87 data tests
+- Docker image build
+- Python syntax validation
+- deterministic CI fixture generation
+- dbt build against fixture data
+- Airflow image build
+- DAG import validation
+- expected DAG validation
 
-Validate Airflow
-├── compile DAG Python
-├── build Airflow image
-├── initialize temporary metadata DB
-├── parse DAGs using Airflow
-├── detect import errors
-└── verify expected DAG
+The workflow is pinned to:
+
+```yaml
+runs-on: ubuntu-24.04
 ```
 
-The CI dataset contains deterministic Silver fixtures so transformations and dbt models can be validated without downloading external datasets during every commit.
+to avoid unexpected changes from the moving `ubuntu-latest` label.
 
 ---
 
-## Technology Stack
+## Technology stack
 
-| Area | Technology |
-|---|---|
-| Language | Python |
-| Dataframes | pandas |
-| Columnar Storage | Apache Parquet / PyArrow |
-| Analytical Database | DuckDB |
-| Transformation | dbt |
-| Orchestration | Apache Airflow |
-| Airflow Metadata DB | PostgreSQL |
-| Containers | Docker / Docker Compose |
-| Local Container Runtime | Colima |
-| CI | GitHub Actions |
-| Weather Data | Open-Meteo |
-| Demographic Data | IBGE |
-| Accident Data | PRF |
+### Data engineering
+
+- Python
+- pandas
+- PyArrow
+- Parquet
+- DuckDB
+- dbt
+- PostgreSQL
+- Apache Airflow
+
+### Data sources and enrichment
+
+- PRF public datasets
+- IBGE
+- Open-Meteo
+
+### Product / visualization
+
+- Streamlit
+- Plotly
+- Altair
+- Vega-Lite
+- GeoJSON
+
+### Infrastructure
+
+- Docker
+- Docker Compose
+- GitHub Actions
 
 ---
 
-## Project Structure
+## Repository structure
 
 ```text
-ceara-road-safety-data-platform/
-│
-├── .github/
-│   └── workflows/
-│       └── ci.yml
-│
+.
 ├── analytics/
 │   ├── models/
 │   │   └── gold/
@@ -437,306 +429,153 @@ ceara-road-safety-data-platform/
 │   ├── dbt_project.yml
 │   └── profiles.yml
 │
+├── dashboard/
+│   ├── app.py
+│   └── assets/
+│       └── ceara_municipalities.geojson
+│
 ├── data/
 │   ├── bronze/
 │   ├── silver/
-│   ├── rejected/
 │   └── warehouse/
 │
+├── dags/
 ├── metadata/
 │
-├── orchestration/
-│   └── dags/
-│       └── ceara_road_safety.py
-│
 ├── scripts/
+│   ├── run_pipeline.sh
 │   ├── create_ci_fixtures.py
-│   └── run_pipeline.sh
+│   └── download_ceara_geojson.py
 │
 ├── src/
-│   ├── ingestion/
-│   │   ├── prf/
-│   │   ├── ibge/
-│   │   └── open_meteo/
-│   │
-│   ├── transform/
-│   │   ├── prf/
-│   │   ├── ibge/
-│   │   └── open_meteo/
-│   │
-│   └── quality/
-│       ├── prf/
-│       ├── ibge/
-│       └── open_meteo/
-│
 ├── tests/
 │   └── fixtures/
 │
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+│
 ├── Dockerfile
-├── Dockerfile.airflow
-├── compose.yaml
-├── Makefile
+├── Dockerfile.dashboard
+├── docker-compose.yml
 ├── requirements.txt
-└── README.md
+└── requirements-dashboard.txt
 ```
 
-Runtime data, warehouse files, metadata manifests, Airflow runtime files, and local environments are excluded from Git.
+Generated data and local warehouse files are intentionally excluded from Git.
 
 ---
 
-## Running the Data Pipeline
+## Run locally
 
-### Requirements
+### Prerequisites
 
-A Docker-compatible runtime is required.
+- Python 3.11+
+- Docker
+- Docker Compose
 
-On macOS, this project can run using Colima:
+On macOS, this project has also been tested using Colima as the Docker runtime.
 
-```bash
-colima start --cpu 4 --memory 8
-```
-
-### Build
+### 1. Clone
 
 ```bash
-make build
+git clone https://github.com/VictorCPena/ceara-road-safety-data-platform.git
+cd ceara-road-safety-data-platform
 ```
 
-### Run the complete pipeline
+### 2. Create a Python environment
 
 ```bash
-make pipeline
+python -m venv .venv
+source .venv/bin/activate
 ```
 
-This executes:
+### 3. Install dashboard dependencies
 
-```text
-PRF ingestion
-→ PRF Silver
-→ PRF quality
-
-IBGE ingestion
-→ IBGE Silver
-→ IBGE quality
-
-Open-Meteo enrichment
-→ Weather Silver
-→ Weather quality
-
-dbt build
-→ Gold models
-→ dbt tests
+```bash
+pip install -r requirements-dashboard.txt
 ```
 
-### Run only dbt
+### 4. Build the data platform image
+
+```bash
+docker compose build pipeline
+```
+
+### 5. Run dbt validation
 
 ```bash
 make dbt
 ```
 
----
-
-## Running Airflow
-
-Initialize the Airflow metadata database:
+### 6. Run the dashboard
 
 ```bash
-docker compose up airflow-init
+streamlit run dashboard/app.py
 ```
 
-Create the memory-intensive ETL pool:
+Then open:
+
+```text
+http://localhost:8501
+```
+
+---
+
+## Rebuilding after analytical changes
+
+The pipeline Docker image copies the `analytics/` directory during build.
+
+Therefore, after changing dbt models locally, rebuild the image before validating:
 
 ```bash
-docker compose exec airflow-api-server \
-  airflow pools set heavy_etl 1 "Memory-intensive ETL tasks"
+docker compose build pipeline
+make dbt
 ```
 
-Start the Airflow components:
-
-```bash
-docker compose up -d \
-  airflow-api-server \
-  airflow-scheduler \
-  airflow-dag-processor \
-  airflow-triggerer
-```
-
-Check the environment:
-
-```bash
-docker compose ps
-```
-
-Airflow health:
-
-```bash
-curl http://localhost:8080/api/v2/monitor/health
-```
-
-Airflow UI:
-
-```text
-http://localhost:8080
-```
+This prevents local tests from accidentally running an older dbt project embedded in a stale Docker image.
 
 ---
 
-## Local Resource Configuration
+## Important analytical limitations
 
-The full Airflow stack plus memory-intensive pandas/PyArrow transformations requires more memory than a minimal Docker VM.
+This project intentionally keeps its claims conservative.
 
-The development environment currently uses:
-
-```text
-4 CPUs
-8 GiB RAM
-```
-
-with:
-
-```text
-Airflow heavy_etl pool = 1
-```
-
-This prevents large PRF transformations from running concurrently and exhausting the local container VM.
+- PRF data represents accidents recorded on **Brazilian federal highways**.
+- It does not represent every traffic accident in Ceará.
+- 2026 is currently a partial observation period.
+- Vehicle counts do not provide a fleet-exposure denominator.
+- A high number of accidents involving a vehicle type does not mean that vehicle type is intrinsically more dangerous.
+- Highway-segment hotspots represent observed concentration, not causal risk.
+- Weather association does not establish causality.
+- Cause and accident-type relationships can be many-to-many.
 
 ---
 
-## Current Data Scope
+## Next phase
 
-Current pipeline coverage includes PRF accident data for:
+The local data platform, automated tests, CI pipeline, and analytical product are complete.
 
-```text
-2024
-2025
-2026
-```
-
-The standardized PRF Silver occurrence dataset contains approximately:
+The next infrastructure phase is deployment to an Oracle Cloud Free Tier environment, including:
 
 ```text
-194k accident records
+Oracle VM
+├── Docker
+├── PostgreSQL
+├── Airflow
+├── data pipeline
+├── DuckDB Gold
+└── Streamlit
 ```
 
-The Ceará analytical scope currently includes approximately:
-
-```text
-3.5k accidents enriched with municipality and weather data
-```
-
-The municipality analytical model contains:
-
-```text
-184 municipalities
-3 years
-552 municipality-year observations
-```
-
-2026 represents a partial-year source snapshot and should not be interpreted as a closed annual period.
+The public dashboard will be exposed separately from the administrative Airflow interface.
 
 ---
 
-## Engineering Decisions
+## Author
 
-### Why Parquet?
+**Victor Pena**
 
-Parquet provides:
+Data Science / Data Engineering
 
-- columnar storage;
-- compression;
-- efficient analytical reads;
-- interoperability with DuckDB, Spark, BigQuery, and other analytical engines.
-
-### Why DuckDB?
-
-DuckDB provides a lightweight local analytical warehouse while preserving SQL-based analytical workflows.
-
-It allows the project to run locally without requiring external infrastructure.
-
-### Why dbt?
-
-dbt separates analytical transformations from ingestion code and provides:
-
-- dependency management;
-- lineage;
-- documentation;
-- reusable SQL models;
-- automated data testing.
-
-### Why Airflow?
-
-Airflow provides explicit orchestration of dependencies between:
-
-- ingestion;
-- transformation;
-- quality validation;
-- enrichment;
-- analytical modeling.
-
-Retries, task state, observability, and resource pools replace a purely sequential shell-based orchestration approach.
-
-### Why keep Silver Brazil-wide?
-
-The standardized PRF Silver layer is designed as a reusable data product.
-
-Ceará-specific filtering belongs to the analytical layer rather than the canonical source representation.
-
-This avoids coupling data standardization to one specific analytical use case.
-
----
-
-## Next Steps
-
-Planned evolution of the platform:
-
-```text
-Local Data Platform
-        ↓
-Cloud Object Storage
-        ↓
-GCS Bronze / Silver
-        ↓
-BigQuery Gold
-        ↓
-dbt-bigquery
-        ↓
-Cloud orchestration
-        ↓
-Observability & alerts
-        ↓
-Analytics / Data Product
-```
-
-Future improvements include:
-
-- incremental processing;
-- historical backfills;
-- cloud storage with Google Cloud Storage;
-- analytical warehouse migration to BigQuery;
-- dbt-bigquery;
-- centralized logging and observability;
-- automated alerts;
-- analytical dashboard;
-- expanded historical accident coverage.
-
----
-
-## Project Goal
-
-This repository is both an analytical road-safety project and a practical implementation of modern Data Engineering concepts:
-
-```text
-Data ingestion
-Data lake design
-Idempotency
-Data contracts
-Data quality
-Dimensional modeling
-Orchestration
-Containerization
-CI
-Resource management
-Cloud-ready architecture
-```
-
-The goal is to build a reproducible and extensible data platform rather than a collection of isolated analysis scripts.
+GitHub: [VictorCPena](https://github.com/VictorCPena)
