@@ -11,7 +11,7 @@ jobs:
 
   data-platform:
     name: Validate Data Platform
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     env:
       DATA_DIR: ./.ci/data
@@ -55,7 +55,7 @@ jobs:
 
   airflow:
     name: Validate Airflow
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
 
