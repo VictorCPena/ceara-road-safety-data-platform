@@ -1,3 +1,5 @@
+config:
+  send_anonymous_usage_stats: false
 ceara_road_safety:
   target: dev
 

@@ -1,0 +1,57 @@
+rule_files:
+  - alerts.yml
+
+evaluation_interval: 5s
+
+tests:
+  - name: quarantine threshold and recovery
+    interval: 5s
+    input_series:
+      - series: 'prf_quarantined_rows{job="lakehouse-airflow",instance="exporter:9108"}'
+        values: '1+0x12 0+0x6'
+    alert_rule_test:
+      - eval_time: 55s
+        alertname: PRFQuarantineNonzero
+        exp_alerts: []
+      - eval_time: 1m
+        alertname: PRFQuarantineNonzero
+        exp_alerts:
+          - exp_labels: {job: lakehouse-airflow, instance: 'exporter:9108', severity: warning}
+            exp_annotations: {summary: "Inspect quarantined PRF records before publishing analysis"}
+      - eval_time: 1m5s
+        alertname: PRFQuarantineNonzero
+        exp_alerts: []
+
+  - name: failed run versus missing report
+    interval: 5s
+    input_series:
+      - series: 'prf_airflow_last_run_success{job="lakehouse-airflow",instance="exporter:9108"}'
+        values: '0+0x20'
+      - series: 'prf_airflow_report_available{job="lakehouse-airflow",instance="exporter:9108"}'
+        values: '1+0x6 0+0x13'
+    alert_rule_test:
+      - eval_time: 30s
+        alertname: LakehouseLatestRunFailed
+        exp_alerts:
+          - exp_labels: {job: lakehouse-airflow, instance: 'exporter:9108', severity: critical}
+            exp_annotations: {summary: "Latest verified Lakehouse run failed"}
+      - eval_time: 35s
+        alertname: LakehouseLatestRunFailed
+        exp_alerts: []
+      - eval_time: 1m35s
+        alertname: LakehouseReportUnavailable
+        exp_alerts:
+          - exp_labels: {job: lakehouse-airflow, instance: 'exporter:9108', severity: warning}
+            exp_annotations: {summary: "The exporter cannot read a completed Lakehouse report"}
+
+  - name: unreachable exporter
+    interval: 5s
+    input_series:
+      - series: 'up{job="lakehouse-airflow",instance="exporter:9108"}'
+        values: '0+0x7'
+    alert_rule_test:
+      - eval_time: 30s
+        alertname: LakehouseExporterDown
+        exp_alerts:
+          - exp_labels: {job: lakehouse-airflow, instance: 'exporter:9108', severity: critical}
+            exp_annotations: {summary: "Prometheus cannot scrape the Lakehouse exporter"}

@@ -1,0 +1,32 @@
+{
+  "status": "passed",
+  "dag_id": "lakehouse_pro",
+  "run_id": "portfolio_20261106T212429_10ecd65d",
+  "transport": "authenticated Airflow REST API; scheduler/LocalExecutor",
+  "started_at_utc": "2026-11-06T21:24:29.334271+00:00",
+  "limitations": "Local portfolio run; no distributed/high-availability claim",
+  "triggered": true,
+  "tasks": [
+    {
+      "task_id": "batch_prf",
+      "state": "success"
+    },
+    {
+      "task_id": "dbt_quality",
+      "state": "success"
+    }
+  ],
+  "data_validation": {
+    "status": "passed",
+    "source_sha256": "7d26e6f4528c2ca2636a8fea2c5bc8755a0ff6a182d82c238a8793b016e4366d",
+    "accepted": 73201,
+    "quarantined": 1,
+    "bronze_rows": 73202,
+    "silver_rows": 73201,
+    "gold_accidents": 73201,
+    "dbt_fact_rows": 73201,
+    "dbt_models": 3,
+    "dbt_data_tests": 7
+  },
+  "seconds": 159.46772988299927
+}

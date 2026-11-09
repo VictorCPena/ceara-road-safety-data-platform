@@ -1,0 +1,8 @@
+name: lakehouse_pro
+version: '1.0'
+config-version: 2
+profile: lakehouse_pro
+model-paths: [models]
+models:
+  lakehouse_pro:
+    +materialized: table

@@ -1,0 +1,76 @@
+name: ceara-lakehouse-observability
+
+x-python-service: &python-service
+  image: ceara-lakehouse-airflow-pro:3.3.2-py312
+  pull_policy: never
+  init: true
+  read_only: true
+  environment:
+    PYTHONDONTWRITEBYTECODE: '1'
+  restart: unless-stopped
+
+services:
+  exporter:
+    <<: *python-service
+    entrypoint: [python, -u, /monitoring/server.py, exporter]
+    volumes:
+      - ./monitoring/server.py:/monitoring/server.py:ro
+      - airflow_work:/airflow-work:ro
+
+  receiver:
+    <<: *python-service
+    entrypoint: [python, -u, /monitoring/server.py, receiver]
+    ports: ['127.0.0.1:${PRF_OBS_RECEIVER_PORT:-19108}:9108']
+    volumes:
+      - ./monitoring/server.py:/monitoring/server.py:ro
+
+  prometheus:
+    image: prom/prometheus:v3.5.0
+    working_dir: /etc/lakehouse-monitoring
+    command:
+      - --config.file=/etc/lakehouse-monitoring/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=3d
+    volumes:
+      - ./monitoring:/etc/lakehouse-monitoring:ro
+      - prometheus_data:/prometheus
+    ports: ['127.0.0.1:${PRF_OBS_PROMETHEUS_PORT:-19090}:9090']
+    restart: unless-stopped
+
+  alertmanager:
+    image: prom/alertmanager:v0.28.1
+    command:
+      - --config.file=/etc/alertmanager/alertmanager.yml
+      - --storage.path=/alertmanager
+      - --cluster.listen-address=
+    volumes:
+      - ./monitoring/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - alertmanager_data:/alertmanager
+    ports: ['127.0.0.1:${PRF_OBS_ALERTMANAGER_PORT:-19093}:9093']
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:12.0.2
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: 'true'
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_AUTH_DISABLE_LOGIN_FORM: 'true'
+      GF_AUTH_BASIC_ENABLED: 'false'
+      GF_SECURITY_DISABLE_INITIAL_ADMIN_CREATION: 'true'
+      GF_ANALYTICS_REPORTING_ENABLED: 'false'
+      GF_ANALYTICS_CHECK_FOR_UPDATES: 'false'
+      GF_ANALYTICS_CHECK_FOR_PLUGIN_UPDATES: 'false'
+    ports: ['127.0.0.1:${PRF_OBS_GRAFANA_PORT:-13000}:3000']
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana_data:/var/lib/grafana
+    restart: unless-stopped
+
+volumes:
+  airflow_work:
+    external: true
+    name: ${LAKEHOUSE_AIRFLOW_WORK_VOLUME:-ceara-lakehouse-airflow-pro_airflow_pro_work}
+  prometheus_data:
+  alertmanager_data:
+  grafana_data:

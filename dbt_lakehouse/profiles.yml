@@ -1,0 +1,9 @@
+config:
+  send_anonymous_usage_stats: false
+lakehouse_pro:
+  target: local
+  outputs:
+    local:
+      type: duckdb
+      path: "{{ env_var('LAKEHOUSE_DBT_PATH', 'work/lakehouse_analytics_v2.duckdb') }}"
+      threads: 2

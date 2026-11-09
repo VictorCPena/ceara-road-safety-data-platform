@@ -1,0 +1,110 @@
+name: ceara-lakehouse-airflow-pro
+
+x-airflow: &airflow
+  image: ceara-lakehouse-airflow-pro:3.3.2-py312
+  build:
+    context: .
+    dockerfile: Dockerfile.airflow-pro
+  working_dir: /app
+  init: true
+  environment: &airflow-env
+    AIRFLOW_HOME: /opt/airflow/runtime
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__CORE__PARALLELISM: '1'
+    AIRFLOW__CORE__MAX_ACTIVE_TASKS_PER_DAG: '1'
+    AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+    AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+    AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_USERS: admin:admin
+    AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_ALL_ADMINS: 'false'
+    AIRFLOW__CORE__EXECUTION_API_SERVER_URL: http://airflow-api-server:8080/execution/
+    AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_PRO_FERNET_KEY:?Run scripts/prepare_airflow_pro.py}
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:${AIRFLOW_PRO_DB_PASSWORD:?Run scripts/prepare_airflow_pro.py}@postgres:5432/airflow
+    AIRFLOW__API_AUTH__JWT_SECRET: ${AIRFLOW_PRO_JWT_SECRET:?Run scripts/prepare_airflow_pro.py}
+    AIRFLOW__API__SECRET_KEY: ${AIRFLOW_PRO_API_SECRET:?Run scripts/prepare_airflow_pro.py}
+    AIRFLOW__API__BASE_URL: http://localhost:${AIRFLOW_PRO_PORT:-18080}
+    AIRFLOW__DAG_PROCESSOR__PARSING_PROCESSES: '1'
+    AIRFLOW__SCHEDULER__PARSING_CLEANUP_INTERVAL: '30'
+    AIRFLOW__LOGGING__BASE_LOG_FOLDER: /opt/airflow/runtime/logs
+    OMP_NUM_THREADS: '1'
+    OPENBLAS_NUM_THREADS: '1'
+    DBT_SEND_ANONYMOUS_USAGE_STATS: 'false'
+    DO_NOT_TRACK: 'true'
+    TZ: UTC
+  volumes:
+    - ./data:/app/data:ro
+    - ./orchestration/dags/lakehouse_pro.py:/opt/airflow/dags/lakehouse_pro.py:ro
+    - airflow_pro_runtime:/opt/airflow/runtime
+    - airflow_pro_work:/app/work
+  restart: unless-stopped
+
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_DB: airflow
+      POSTGRES_PASSWORD: ${AIRFLOW_PRO_DB_PASSWORD:?Run scripts/prepare_airflow_pro.py}
+    volumes:
+      - airflow_pro_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U airflow -d airflow']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  airflow-init:
+    <<: *airflow
+    command: [airflow, db, migrate]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: 'no'
+
+  airflow-api-server:
+    <<: *airflow
+    command: [airflow, api-server, --host, '0.0.0.0', --port, '8080', --workers, '1']
+    ports: ['127.0.0.1:${AIRFLOW_PRO_PORT:-18080}:8080']
+    depends_on:
+      postgres:
+        condition: service_healthy
+      airflow-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: [CMD-SHELL, 'python -c "import urllib.request; urllib.request.urlopen(\"http://127.0.0.1:8080/api/v2/monitor/health\", timeout=5)"']
+      interval: 10s
+      timeout: 10s
+      retries: 18
+      start_period: 30s
+
+  airflow-scheduler:
+    <<: *airflow
+    hostname: airflow-scheduler
+    command: [airflow, scheduler]
+    depends_on:
+      airflow-api-server:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD-SHELL, 'airflow jobs check --job-type SchedulerJob --local']
+      interval: 15s
+      timeout: 10s
+      retries: 12
+      start_period: 30s
+
+  airflow-dag-processor:
+    <<: *airflow
+    command: [airflow, dag-processor]
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: [CMD-SHELL, 'airflow jobs check --job-type DagProcessorJob --local']
+      interval: 15s
+      timeout: 10s
+      retries: 12
+      start_period: 30s
+
+volumes:
+  airflow_pro_postgres:
+  airflow_pro_runtime:
+  airflow_pro_work:

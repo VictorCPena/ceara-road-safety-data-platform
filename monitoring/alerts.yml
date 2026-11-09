@@ -1,0 +1,23 @@
+groups:
+  - name: lakehouse
+    rules:
+      - alert: PRFQuarantineNonzero
+        expr: prf_quarantined_rows > 0
+        for: 1m
+        labels: {severity: warning}
+        annotations: {summary: "Inspect quarantined PRF records before publishing analysis"}
+      - alert: LakehouseLatestRunFailed
+        expr: prf_airflow_last_run_success == 0 and prf_airflow_report_available == 1
+        for: 30s
+        labels: {severity: critical}
+        annotations: {summary: "Latest verified Lakehouse run failed"}
+      - alert: LakehouseReportUnavailable
+        expr: prf_airflow_report_available == 0
+        for: 1m
+        labels: {severity: warning}
+        annotations: {summary: "The exporter cannot read a completed Lakehouse report"}
+      - alert: LakehouseExporterDown
+        expr: up{job="lakehouse-airflow"} == 0
+        for: 30s
+        labels: {severity: critical}
+        annotations: {summary: "Prometheus cannot scrape the Lakehouse exporter"}

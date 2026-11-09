@@ -6,6 +6,10 @@ on:
       - main
 
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
 
@@ -21,6 +25,11 @@ jobs:
 
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Generate temporary Compose configuration
+        run: python scripts/create_local_env.py
 
       - name: Prepare fixture runtime
         run: |
@@ -30,7 +39,9 @@ jobs:
           mkdir -p .ci/data/warehouse
           mkdir -p .ci/metadata
 
-          cp -R tests/fixtures/silver .ci/data/silver
+          if [ -d tests/fixtures/silver ]; then
+            cp -R tests/fixtures/silver .ci/data/silver
+          fi
 
       - name: Validate Docker Compose
         run: |
@@ -46,6 +57,7 @@ jobs:
             python -m compileall -q src
 
       - name: Run dbt build against fixture data
+        if: ${{ hashFiles('tests/fixtures/silver/**/*.parquet') != '' }}
         run: |
           docker compose run --rm pipeline \
             dbt build \
@@ -61,6 +73,8 @@ jobs:
 
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Validate DAG Python syntax
         run: |

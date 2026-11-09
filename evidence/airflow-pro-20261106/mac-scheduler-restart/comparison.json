@@ -1,0 +1,16 @@
+{
+  "source": "User-supplied terminal messages; JSON transcribed without changing metrics",
+  "before_run": "portfolio_20261106T212429_10ecd65d",
+  "after_run": "portfolio_20261106T214640_559df1a9",
+  "same_source_sha256": true,
+  "same_validation_counts": true,
+  "restart_command": "docker compose --env-file .env.airflow-pro -f compose.airflow-pro.yaml restart airflow-scheduler",
+  "verified": "Scheduled idle scheduler restart followed by successful new DAG run and unchanged data counts",
+  "not_verified": [
+    "Crash during an active task",
+    "PostgreSQL or API server restart",
+    "Broker outage",
+    "High availability or distributed recovery"
+  ],
+  "performance_interpretation": "128.0716736029999 s is this run/verification duration; no controlled speed comparison with the previous 159.46772988299927 s run"
+}

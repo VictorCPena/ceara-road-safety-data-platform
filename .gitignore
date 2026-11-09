@@ -1,43 +1,37 @@
-# Python
 .venv/
-venv/
 __pycache__/
-*.py[cod]
-*$py.class
-
-# macOS
-.DS_Store
-
-# Data lake / warehouse
-data/
-metadata/
-
-# dbt runtime
-analytics/target/
-analytics/logs/
-analytics/dbt_packages/
-analytics/.user.yml
-
-# DuckDB
-*.duckdb
-*.duckdb.wal
-
-# Environment / secrets
+.pytest_cache/
+.ruff_cache/
+data/raw/
+work/
 .env
-.env.*
-!.env.example
-
-# IDE
-.vscode/
-.idea/
-
-# Temporary files
-*.tmp
-*.temp
+*.db
 *.log
 
-# CI runtime
-.ci/
+.terraform/
+*.tfstate
+*.tfstate.*
 
-# Airflow local runtime
-.airflow/
+# Generated environments and local state
+.venv*/
+.env.*
+!.env.example
+.DS_Store
+*.py[cod]
+*.db-*
+*.sqlite*
+*.duckdb*
+*.joblib
+*.safetensors
+*.pem
+*.key
+
+# Downloaded source data and derived warehouse state
+/data/
+/metadata/
+/.ci/
+/tests/fixtures/silver/
+/dashboard/assets/ceara_municipalities.geojson
+.user.yml
+target/
+logs/

@@ -1,0 +1,29 @@
+{
+  "status": "passed",
+  "scope": "Native Python HTTP export from a copy of the previously validated real Airflow report; YAML/JSON structure and localhost/readonly configuration",
+  "source_run": "portfolio_20261106T214640_559df1a9",
+  "samples": {
+    "prf_airflow_report_available": "1",
+    "prf_airflow_last_run_success": "1",
+    "prf_airflow_last_run_duration_seconds": "128.0716736029999",
+    "prf_airflow_last_report_timestamp_seconds": "1794001852.0",
+    "prf_accepted_rows": "73201",
+    "prf_quarantined_rows": "1",
+    "prf_airflow_bronze_rows": "73202",
+    "prf_airflow_silver_rows": "73201",
+    "prf_airflow_gold_accidents": "73201",
+    "prf_airflow_dbt_fact_rows": "73201",
+    "prf_airflow_dbt_models": "3",
+    "prf_airflow_dbt_data_tests": "7"
+  },
+  "yaml_documents_parsed": 8,
+  "dashboard_panels": 9,
+  "pending_mac": [
+    "Compose runtime",
+    "promtool rule tests",
+    "Grafana datasource HTTP proxy",
+    "Prometheus scrape",
+    "Alertmanager delivery"
+  ],
+  "timestamp_origin": "Archive copy modification time used by the native HTTP test"
+}

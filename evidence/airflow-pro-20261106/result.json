@@ -1,0 +1,29 @@
+{
+  "date": "2026-11-06",
+  "unit_tests": {
+    "passed": 5,
+    "environment": "isolated Airflow 3.3.2/Python 3.12.14 Linux"
+  },
+  "dag_test": {
+    "state": "success",
+    "metadata_backend": "SQLite",
+    "dataset": "synthetic 3-row PRF-format fixture",
+    "accepted": 2,
+    "quarantined": 1,
+    "tasks_successful": [
+      "batch_prf",
+      "dbt_quality"
+    ],
+    "dbt_models": 3,
+    "dbt_tests": 7,
+    "final_dag_run_seconds": 17.07124
+  },
+  "negative_output_checks": [
+    "wrong analytical counts rejected",
+    "CSV checksum mismatch rejected"
+  ],
+  "docker_build": "not executed",
+  "docker_compose_runtime": "not executed",
+  "postgres_runtime": "not executed",
+  "rest_scheduler_trigger": "not executed"
+}

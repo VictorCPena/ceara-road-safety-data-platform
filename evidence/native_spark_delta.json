@@ -1,0 +1,154 @@
+{
+  "accepted": 73201,
+  "quarantined": 1,
+  "replay_rows_before": 73201,
+  "replay_rows_after": 73201,
+  "gold_rows": 271,
+  "seconds": 27.056003455000337,
+  "source_sha256": "7d26e6f4528c2ca2636a8fea2c5bc8755a0ff6a182d82c238a8793b016e4366d",
+  "engine": "Apache Spark 3.5.8 local[2] + native Delta Lake 3.2.1",
+  "transaction_demo_history": [
+    {
+      "version": 8,
+      "operation": "DELETE",
+      "operationMetrics": {
+        "numDeletionVectorsUpdated": "0",
+        "numAddedFiles": "1",
+        "executionTimeMs": "730",
+        "numDeletionVectorsRemoved": "0",
+        "numRemovedFiles": "1",
+        "rewriteTimeMs": "135",
+        "numRemovedBytes": "2516",
+        "scanTimeMs": "595",
+        "numCopiedRows": "2",
+        "numDeletionVectorsAdded": "0",
+        "numAddedChangeFiles": "0",
+        "numDeletedRows": "1",
+        "numAddedBytes": "2422"
+      }
+    },
+    {
+      "version": 7,
+      "operation": "UPDATE",
+      "operationMetrics": {
+        "numDeletionVectorsUpdated": "0",
+        "numAddedFiles": "1",
+        "executionTimeMs": "535",
+        "numDeletionVectorsRemoved": "0",
+        "numUpdatedRows": "1",
+        "numRemovedFiles": "1",
+        "rewriteTimeMs": "169",
+        "numRemovedBytes": "2509",
+        "scanTimeMs": "364",
+        "numCopiedRows": "2",
+        "numDeletionVectorsAdded": "0",
+        "numAddedChangeFiles": "0",
+        "numAddedBytes": "2516"
+      }
+    },
+    {
+      "version": 6,
+      "operation": "WRITE",
+      "operationMetrics": {
+        "numOutputRows": "3",
+        "numOutputBytes": "2509",
+        "numFiles": "1"
+      }
+    },
+    {
+      "version": 5,
+      "operation": "DELETE",
+      "operationMetrics": {
+        "numDeletionVectorsUpdated": "0",
+        "numAddedFiles": "1",
+        "executionTimeMs": "753",
+        "numDeletionVectorsRemoved": "0",
+        "numRemovedFiles": "1",
+        "rewriteTimeMs": "183",
+        "numRemovedBytes": "2516",
+        "scanTimeMs": "569",
+        "numCopiedRows": "2",
+        "numDeletionVectorsAdded": "0",
+        "numAddedChangeFiles": "0",
+        "numDeletedRows": "1",
+        "numAddedBytes": "2422"
+      }
+    },
+    {
+      "version": 4,
+      "operation": "UPDATE",
+      "operationMetrics": {
+        "numDeletionVectorsUpdated": "0",
+        "numAddedFiles": "1",
+        "executionTimeMs": "510",
+        "numDeletionVectorsRemoved": "0",
+        "numUpdatedRows": "1",
+        "numRemovedFiles": "1",
+        "rewriteTimeMs": "161",
+        "numRemovedBytes": "2509",
+        "scanTimeMs": "347",
+        "numCopiedRows": "2",
+        "numDeletionVectorsAdded": "0",
+        "numAddedChangeFiles": "0",
+        "numAddedBytes": "2516"
+      }
+    },
+    {
+      "version": 3,
+      "operation": "WRITE",
+      "operationMetrics": {
+        "numOutputRows": "3",
+        "numOutputBytes": "2509",
+        "numFiles": "1"
+      }
+    },
+    {
+      "version": 2,
+      "operation": "DELETE",
+      "operationMetrics": {
+        "numDeletionVectorsUpdated": "0",
+        "numAddedFiles": "1",
+        "executionTimeMs": "965",
+        "numDeletionVectorsRemoved": "0",
+        "numRemovedFiles": "1",
+        "rewriteTimeMs": "177",
+        "numRemovedBytes": "2516",
+        "scanTimeMs": "787",
+        "numCopiedRows": "2",
+        "numDeletionVectorsAdded": "0",
+        "numAddedChangeFiles": "0",
+        "numDeletedRows": "1",
+        "numAddedBytes": "2422"
+      }
+    },
+    {
+      "version": 1,
+      "operation": "UPDATE",
+      "operationMetrics": {
+        "numDeletionVectorsUpdated": "0",
+        "numAddedFiles": "1",
+        "executionTimeMs": "674",
+        "numDeletionVectorsRemoved": "0",
+        "numUpdatedRows": "1",
+        "numRemovedFiles": "1",
+        "rewriteTimeMs": "211",
+        "numRemovedBytes": "2509",
+        "scanTimeMs": "461",
+        "numCopiedRows": "2",
+        "numDeletionVectorsAdded": "0",
+        "numAddedChangeFiles": "0",
+        "numAddedBytes": "2516"
+      }
+    },
+    {
+      "version": 0,
+      "operation": "WRITE",
+      "operationMetrics": {
+        "numOutputRows": "3",
+        "numOutputBytes": "2509",
+        "numFiles": "1"
+      }
+    }
+  ],
+  "limitations": "Single-node execution; Spark engine used distributed operators locally. No multi-node scale or Databricks deployment claimed."
+}

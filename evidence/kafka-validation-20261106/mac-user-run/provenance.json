@@ -1,0 +1,12 @@
+{
+  "evidence_origin": "User-supplied terminal transcript, not rerun by assistant on Mac",
+  "attachment_filename": "Texto colado(20261106-202535).txt",
+  "attachment_sha256": "148142fdd03e21380e3e77d1305b9bd4383fa64000d9ddfb168e78e81017e023",
+  "result_extracted_without_metric_changes": true,
+  "pytest_reported": {
+    "passed": 7,
+    "warnings": 142,
+    "seconds": 43.72
+  },
+  "limitations": "No direct inspection of Mac Delta/checkpoint directories beyond the runner assertions and progress in the transcript"
+}

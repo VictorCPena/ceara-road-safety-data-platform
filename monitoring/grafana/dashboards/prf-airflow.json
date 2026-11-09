@@ -1,0 +1,634 @@
+{
+  "uid": "prf-airflow",
+  "title": "PRF Lakehouse | Airflow",
+  "schemaVersion": 40,
+  "version": 1,
+  "editable": false,
+  "refresh": "10s",
+  "timezone": "browser",
+  "time": {
+    "from": "now-30m",
+    "to": "now"
+  },
+  "tags": [
+    "prf",
+    "lakehouse",
+    "airflow"
+  ],
+  "panels": [
+    {
+      "id": 1,
+      "title": "Última execução verificada",
+      "type": "stat",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 6,
+        "h": 5
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "lakehouse-prom"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "lakehouse-prom"
+          },
+          "expr": "prf_airflow_last_run_success",
+          "legendFormat": "Estado",
+          "instant": true,
+          "range": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "Falhou",
+                  "color": "red",
+                  "index": 0
+                },
+                "1": {
+                  "text": "Passou",
+                  "color": "green",
+                  "index": 1
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 2,
+      "title": "Aceitos",
+      "type": "stat",
+      "gridPos": {
+        "x": 6,
+        "y": 0,
+        "w": 6,
+        "h": 5
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "lakehouse-prom"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "lakehouse-prom"
+          },
+          "expr": "prf_accepted_rows",
+          "legendFormat": "Registros",
+          "instant": true,
+          "range": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 3,
+      "title": "Quarentena",
+      "type": "stat",
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 6,
+        "h": 5
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "lakehouse-prom"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "lakehouse-prom"
+          },
+          "expr": "prf_quarantined_rows",
+          "legendFormat": "Registros",
+          "instant": true,
+          "range": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 4,
+      "title": "Execução e conferência",
+      "type": "stat",
+      "gridPos": {
+        "x": 18,
+        "y": 0,
+        "w": 6,
+        "h": 5
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "lakehouse-prom"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "lakehouse-prom"
+          },
+          "expr": "prf_airflow_last_run_duration_seconds",
+          "legendFormat": "Duração",
+          "instant": true,
+          "range": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 5,
+      "title": "Conferência das camadas",
+      "type": "stat",
+      "gridPos": {
+        "x": 0,
+        "y": 5,
+        "w": 12,
+        "h": 5
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "lakehouse-prom"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "lakehouse-prom"
+          },
+          "expr": "prf_airflow_bronze_rows",
+          "legendFormat": "Bronze",
+          "instant": true,
+          "range": false
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "lakehouse-prom"
+          },
+          "expr": "prf_airflow_silver_rows",
+          "legendFormat": "Silver",
+          "instant": true,
+          "range": false
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "lakehouse-prom"
+          },
+          "expr": "prf_airflow_gold_accidents",
+          "legendFormat": "Gold (acidentes)",
+          "instant": true,
+          "range": false
+        },
+        {
+          "refId": "D",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "lakehouse-prom"
+          },
+          "expr": "prf_airflow_dbt_fact_rows",
+          "legendFormat": "Tabela fato",
+          "instant": true,
+          "range": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 6,
+      "title": "Resultados do dbt",
+      "type": "stat",
+      "gridPos": {
+        "x": 12,
+        "y": 5,
+        "w": 12,
+        "h": 5
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "lakehouse-prom"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "lakehouse-prom"
+          },
+          "expr": "prf_airflow_dbt_models",
+          "legendFormat": "Modelos",
+          "instant": true,
+          "range": false
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "lakehouse-prom"
+          },
+          "expr": "prf_airflow_dbt_data_tests",
+          "legendFormat": "Testes de dados",
+          "instant": true,
+          "range": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 7,
+      "title": "Coleta do exportador",
+      "type": "stat",
+      "gridPos": {
+        "x": 0,
+        "y": 10,
+        "w": 8,
+        "h": 5
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "lakehouse-prom"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "lakehouse-prom"
+          },
+          "expr": "up{job=\"lakehouse-airflow\"}",
+          "legendFormat": "Scrape",
+          "instant": true,
+          "range": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "Indisponível",
+                  "color": "red",
+                  "index": 0
+                },
+                "1": {
+                  "text": "Ativo",
+                  "color": "green",
+                  "index": 1
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 8,
+      "title": "Idade do último relatório",
+      "type": "stat",
+      "gridPos": {
+        "x": 8,
+        "y": 10,
+        "w": 8,
+        "h": 5
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "lakehouse-prom"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "lakehouse-prom"
+          },
+          "expr": "time() - prf_airflow_last_report_timestamp_seconds",
+          "legendFormat": "Idade",
+          "instant": true,
+          "range": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 9,
+      "title": "Alerta de quarentena ativo",
+      "type": "stat",
+      "gridPos": {
+        "x": 16,
+        "y": 10,
+        "w": 8,
+        "h": 5
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "lakehouse-prom"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "lakehouse-prom"
+          },
+          "expr": "max(ALERTS{alertname=\"PRFQuarantineNonzero\",alertstate=\"firing\"}) or vector(0)",
+          "legendFormat": "Alerta",
+          "instant": true,
+          "range": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "Inativo",
+                  "color": "green",
+                  "index": 0
+                },
+                "1": {
+                  "text": "Disparado",
+                  "color": "orange",
+                  "index": 1
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "textMode": "auto"
+      }
+    }
+  ]
+}

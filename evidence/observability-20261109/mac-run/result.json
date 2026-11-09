@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "prometheus_scrape_up": true,
+  "source": "latest completed passing report in the Airflow work volume",
+  "bronze_rows": 73202,
+  "accepted_rows": 73201,
+  "quarantined_rows": 1,
+  "dbt_models": 3,
+  "dbt_data_tests": 7,
+  "grafana_dashboard_uid": "prf-airflow",
+  "grafana_datasource_query_verified": true,
+  "alertmanager_active_alert": "PRFQuarantineNonzero",
+  "webhook_receipt": {
+    "alertname": "PRFQuarantineNonzero",
+    "status": "firing",
+    "starts_at": 1794244368.752,
+    "received_at": "2026-11-09T17:12:53.793196+00:00"
+  }
+}

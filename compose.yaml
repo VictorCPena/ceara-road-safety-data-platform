@@ -22,11 +22,11 @@ x-airflow-common: &airflow-common
     AIRFLOW__CORE__EXECUTION_API_SERVER_URL: "http://airflow-api-server:8080/execution/"
 
     # Metadata DB
-    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: "postgresql+psycopg2://airflow:airflow@postgres:5432/airflow"
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: "postgresql+psycopg2://airflow:${AIRFLOW_DB_PASSWORD:?Run scripts/create_local_env.py}@postgres:5432/airflow"
 
     # Segredos locais/dev
-    AIRFLOW__API_AUTH__JWT_SECRET: "ceara-road-safety-local-jwt-secret"
-    AIRFLOW__API__SECRET_KEY: "ceara-road-safety-local-api-secret"
+    AIRFLOW__API_AUTH__JWT_SECRET: "${AIRFLOW_JWT_SECRET:?Run scripts/create_local_env.py}"
+    AIRFLOW__API__SECRET_KEY: "${AIRFLOW_API_SECRET:?Run scripts/create_local_env.py}"
 
     AIRFLOW__API__BASE_URL: "http://localhost:8080"
 
@@ -72,7 +72,7 @@ services:
 
     environment:
       POSTGRES_USER: airflow
-      POSTGRES_PASSWORD: airflow
+      POSTGRES_PASSWORD: "${AIRFLOW_DB_PASSWORD:?Run scripts/create_local_env.py}"
       POSTGRES_DB: airflow
 
     volumes:
@@ -124,7 +124,7 @@ services:
       - "8080"
 
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
 
     depends_on:
       postgres:
