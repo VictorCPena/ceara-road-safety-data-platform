@@ -1,0 +1,315 @@
+{
+  "event": "kafka_validation_result",
+  "status": "passed",
+  "started_at_utc": "2026-11-06T20:24:20.105908+00:00",
+  "dataset": "Historical PRF CSV replay; not a live PRF feed",
+  "source_csv": "data/raw/datatran2024.csv",
+  "source_sha256": "7d26e6f4528c2ca2636a8fea2c5bc8755a0ff6a182d82c238a8793b016e4366d",
+  "topic": "prf-validation-4818ab7b1fbe",
+  "brokers": "127.0.0.1:19092",
+  "output": "work/kafka-validation/20261106T202420-5f2956",
+  "platform": "macOS-13.7.8-x86_64-i386-64bit",
+  "python": "3.12.13",
+  "pyspark": "3.5.8",
+  "requested_rows": 20,
+  "checks": {
+    "topic_created": true,
+    "initial_rows_match_source": true,
+    "duplicate_deduplicated": true,
+    "invalid_envelope_in_dlq": true,
+    "injected_failure_observed": true,
+    "delta_commit_survived_failure": true,
+    "checkpoint_replay_idempotent": true,
+    "tombstone_applied": true,
+    "gold_reconciled": true,
+    "empty_restart_no_reconsumption": true
+  },
+  "limitations": [
+    "Local single-broker, single-node study; not an availability or scale benchmark",
+    "Injected revisions/invalid envelope are synthetic; base rows come from the PRF CSV",
+    "Failure is injected in foreachBatch after Delta/Gold commit; no broker outage or process kill tested",
+    "At-least-once foreachBatch with idempotent Delta effects; no global exactly-once claim",
+    "Two-day watermark; older corrections require batch reconciliation",
+    "Topic and output are retained for inspection; each invocation uses a fresh topic/root"
+  ],
+  "first_progress": [
+    {
+      "id": "5ebdcadb-1b98-4144-9780-f1d17426c8ea",
+      "runId": "b57ed523-252d-4da2-8304-20e69b700a62",
+      "name": null,
+      "timestamp": "2026-11-06T20:25:04.950Z",
+      "batchId": 0,
+      "numInputRows": 11,
+      "inputRowsPerSecond": 0.0,
+      "processedRowsPerSecond": 3.5065349059611095,
+      "durationMs": {
+        "addBatch": 2075,
+        "commitOffsets": 68,
+        "getBatch": 54,
+        "latestOffset": 746,
+        "queryPlanning": 103,
+        "triggerExecution": 3137,
+        "walCommit": 77
+      },
+      "eventTime": {
+        "avg": "2024-12-31T07:34:00.000Z",
+        "max": "2024-12-31T18:00:00.000Z",
+        "min": "2024-12-29T19:30:00.000Z",
+        "watermark": "1970-01-01T00:00:00.000Z"
+      },
+      "stateOperators": [
+        {
+          "operatorName": "dedupeWithinWatermark",
+          "numRowsTotal": 9,
+          "numRowsUpdated": 10,
+          "allUpdatesTimeMs": 49,
+          "numRowsRemoved": 0,
+          "allRemovalsTimeMs": 1,
+          "commitTimeMs": 102,
+          "memoryUsedBytes": 3016,
+          "numRowsDroppedByWatermark": 0,
+          "numShufflePartitions": 2,
+          "numStateStoreInstances": 2,
+          "customMetrics": {
+            "loadedMapCacheHitCount": 0,
+            "loadedMapCacheMissCount": 0,
+            "numDroppedDuplicateRows": 1,
+            "stateOnCurrentVersionSizeBytes": 2728
+          }
+        }
+      ],
+      "sources": [
+        {
+          "description": "KafkaV2[Subscribe[prf-validation-4818ab7b1fbe]]",
+          "startOffset": null,
+          "endOffset": {
+            "prf-validation-4818ab7b1fbe": {
+              "0": 11
+            }
+          },
+          "latestOffset": {
+            "prf-validation-4818ab7b1fbe": {
+              "0": 11
+            }
+          },
+          "numInputRows": 11,
+          "inputRowsPerSecond": 0.0,
+          "processedRowsPerSecond": 3.5065349059611095,
+          "metrics": {
+            "avgOffsetsBehindLatest": "0.0",
+            "maxOffsetsBehindLatest": "0",
+            "minOffsetsBehindLatest": "0"
+          }
+        }
+      ],
+      "sink": {
+        "description": "ForeachBatchSink",
+        "numOutputRows": -1
+      }
+    },
+    {
+      "id": "5ebdcadb-1b98-4144-9780-f1d17426c8ea",
+      "runId": "b57ed523-252d-4da2-8304-20e69b700a62",
+      "name": null,
+      "timestamp": "2026-11-06T20:25:08.091Z",
+      "batchId": 1,
+      "numInputRows": 0,
+      "inputRowsPerSecond": 0.0,
+      "processedRowsPerSecond": 0.0,
+      "durationMs": {
+        "addBatch": 326,
+        "commitOffsets": 79,
+        "getBatch": 0,
+        "latestOffset": 0,
+        "queryPlanning": 117,
+        "triggerExecution": 594,
+        "walCommit": 65
+      },
+      "eventTime": {
+        "watermark": "2024-12-29T18:00:00.000Z"
+      },
+      "stateOperators": [
+        {
+          "operatorName": "dedupeWithinWatermark",
+          "numRowsTotal": 9,
+          "numRowsUpdated": 0,
+          "allUpdatesTimeMs": 0,
+          "numRowsRemoved": 0,
+          "allRemovalsTimeMs": 0,
+          "commitTimeMs": 171,
+          "memoryUsedBytes": 3848,
+          "numRowsDroppedByWatermark": 0,
+          "numShufflePartitions": 2,
+          "numStateStoreInstances": 2,
+          "customMetrics": {
+            "loadedMapCacheHitCount": 2,
+            "loadedMapCacheMissCount": 0,
+            "numDroppedDuplicateRows": 0,
+            "stateOnCurrentVersionSizeBytes": 2792
+          }
+        }
+      ],
+      "sources": [
+        {
+          "description": "KafkaV2[Subscribe[prf-validation-4818ab7b1fbe]]",
+          "startOffset": {
+            "prf-validation-4818ab7b1fbe": {
+              "0": 11
+            }
+          },
+          "endOffset": {
+            "prf-validation-4818ab7b1fbe": {
+              "0": 11
+            }
+          },
+          "latestOffset": {
+            "prf-validation-4818ab7b1fbe": {
+              "0": 11
+            }
+          },
+          "numInputRows": 0,
+          "inputRowsPerSecond": 0.0,
+          "processedRowsPerSecond": 0.0,
+          "metrics": {
+            "avgOffsetsBehindLatest": "0.0",
+            "maxOffsetsBehindLatest": "0",
+            "minOffsetsBehindLatest": "0"
+          }
+        }
+      ],
+      "sink": {
+        "description": "ForeachBatchSink",
+        "numOutputRows": -1
+      }
+    }
+  ],
+  "recovery_progress": [
+    {
+      "id": "5ebdcadb-1b98-4144-9780-f1d17426c8ea",
+      "runId": "9aeb3cb0-c1a0-4a07-842e-d0d1cfe2abfd",
+      "name": null,
+      "timestamp": "2026-11-06T20:25:11.107Z",
+      "batchId": 2,
+      "numInputRows": 2,
+      "inputRowsPerSecond": 0.0,
+      "processedRowsPerSecond": 1.2953367875647668,
+      "durationMs": {
+        "addBatch": 1370,
+        "commitOffsets": 134,
+        "getBatch": 1,
+        "queryPlanning": 30,
+        "triggerExecution": 1544
+      },
+      "eventTime": {
+        "avg": "2024-12-31T18:00:00.000Z",
+        "max": "2024-12-31T18:00:00.000Z",
+        "min": "2024-12-31T18:00:00.000Z",
+        "watermark": "2024-12-29T18:00:00.000Z"
+      },
+      "stateOperators": [
+        {
+          "operatorName": "dedupeWithinWatermark",
+          "numRowsTotal": 10,
+          "numRowsUpdated": 2,
+          "allUpdatesTimeMs": 98,
+          "numRowsRemoved": 0,
+          "allRemovalsTimeMs": 0,
+          "commitTimeMs": 413,
+          "memoryUsedBytes": 4080,
+          "numRowsDroppedByWatermark": 0,
+          "numShufflePartitions": 2,
+          "numStateStoreInstances": 2,
+          "customMetrics": {
+            "loadedMapCacheHitCount": 1,
+            "loadedMapCacheMissCount": 2,
+            "numDroppedDuplicateRows": 2,
+            "stateOnCurrentVersionSizeBytes": 3056
+          }
+        }
+      ],
+      "sources": [
+        {
+          "description": "KafkaV2[Subscribe[prf-validation-4818ab7b1fbe]]",
+          "startOffset": {
+            "prf-validation-4818ab7b1fbe": {
+              "0": 11
+            }
+          },
+          "endOffset": {
+            "prf-validation-4818ab7b1fbe": {
+              "0": 13
+            }
+          },
+          "latestOffset": null,
+          "numInputRows": 2,
+          "inputRowsPerSecond": 0.0,
+          "processedRowsPerSecond": 1.2953367875647668
+        }
+      ],
+      "sink": {
+        "description": "ForeachBatchSink",
+        "numOutputRows": -1
+      }
+    }
+  ],
+  "empty_restart_progress": [
+    {
+      "id": "5ebdcadb-1b98-4144-9780-f1d17426c8ea",
+      "runId": "a0e31f48-6760-4c89-b965-0cafd6f210a3",
+      "name": null,
+      "timestamp": "2026-11-06T20:25:12.902Z",
+      "batchId": 3,
+      "numInputRows": 0,
+      "inputRowsPerSecond": 0.0,
+      "processedRowsPerSecond": 0.0,
+      "durationMs": {
+        "latestOffset": 29,
+        "triggerExecution": 36
+      },
+      "eventTime": {
+        "watermark": "2024-12-29T18:00:00.000Z"
+      },
+      "stateOperators": [],
+      "sources": [
+        {
+          "description": "KafkaV2[Subscribe[prf-validation-4818ab7b1fbe]]",
+          "startOffset": {
+            "prf-validation-4818ab7b1fbe": {
+              "0": 13
+            }
+          },
+          "endOffset": {
+            "prf-validation-4818ab7b1fbe": {
+              "0": 13
+            }
+          },
+          "latestOffset": {
+            "prf-validation-4818ab7b1fbe": {
+              "0": 13
+            }
+          },
+          "numInputRows": 0,
+          "inputRowsPerSecond": 0.0,
+          "processedRowsPerSecond": 0.0,
+          "metrics": {
+            "avgOffsetsBehindLatest": "0.0",
+            "maxOffsetsBehindLatest": "0",
+            "minOffsetsBehindLatest": "0"
+          }
+        }
+      ],
+      "sink": {
+        "description": "ForeachBatchSink",
+        "numOutputRows": -1
+      }
+    }
+  ],
+  "source_rows": 9,
+  "first_messages": 11,
+  "correction_messages": 2,
+  "silver_rows": 9,
+  "live_gold_accidents": 8,
+  "dlq_rows": 1,
+  "seconds": 52.640601533988956,
+  "public_copy_note": "Local filesystem paths made relative. Result metrics are unchanged."
+}

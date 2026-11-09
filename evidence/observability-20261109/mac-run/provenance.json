@@ -1,0 +1,23 @@
+{
+  "source": "User-provided terminal output, transcribed from the conversation",
+  "date_fortaleza": "2026-11-09",
+  "compose_config_check": "passed, inferred from chained commands proceeding",
+  "promtool_config": "passed",
+  "promtool_rules_found": 4,
+  "promtool_rule_tests": "passed",
+  "containers_started": [
+    "exporter",
+    "receiver",
+    "prometheus",
+    "alertmanager",
+    "grafana"
+  ],
+  "images": {
+    "prometheus": "prom/prometheus:v3.5.0",
+    "alertmanager": "prom/alertmanager:v0.28.1",
+    "grafana": "grafana/grafana:12.0.2"
+  },
+  "receipt_fortaleza": "2026-11-09T14:12:53.793196-03:00",
+  "alert_start_to_receipt_seconds": 5.041196,
+  "scope": "One local Compose run on the user Mac, using the real Airflow report. Grafana dashboard and datasource were checked via HTTP. Additional alert conditions were tested with synthetic series via promtool."
+}

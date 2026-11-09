@@ -1,13 +1,19 @@
-.venv/
-.git/
-__pycache__/
-*.pyc
-.DS_Store
+.git
+.venv
+.venv*
+.env
+.env*
+backup-atualizacao-*
+work
+__pycache__
+.pytest_cache
+data/raw
 
-data/
-metadata/
+**/target
+**/logs
 
-analytics/target/
-analytics/logs/
-
-*.duckdb
+.venv*
+.env.*
+**/*.pem
+**/*.key
+.ruff_cache

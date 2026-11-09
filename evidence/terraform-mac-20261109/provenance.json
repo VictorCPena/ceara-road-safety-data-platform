@@ -1,0 +1,15 @@
+{
+  "source": "User-provided Mac terminal transcript",
+  "date_fortaleza": "2026-11-09",
+  "image": "hashicorp/terraform:1.11.4",
+  "image_pull_digest": "sha256:5820b87995595425074f881500a037b0ccd41158d0d9b44d78f5f120612f2d3d",
+  "provider": "hashicorp/aws@5.100.0",
+  "working_copy": "infra/main.tf and infra/.terraform.lock.hcl copied from a read-only mount into the container",
+  "commands": [
+    "terraform fmt -check",
+    "terraform init -backend=false -input=false -lockfile=readonly",
+    "terraform validate -json"
+  ],
+  "scope": "Local formatting, provider initialization and configuration validation. Cloud planning and apply remain outside this run.",
+  "prior_failed_runtime_evidence": "../terraform_validate.json"
+}

@@ -1,0 +1,279 @@
+{
+  "runs": [
+    {
+      "python_peak_rss_mb": 215.01171875,
+      "max_child_peak_rss_mb": 0.0,
+      "engine": "pandas",
+      "seconds": 0.15513325200026884,
+      "rows": 73201,
+      "deaths": 6163,
+      "groups": 27,
+      "multiplier": 1,
+      "repetition": 1,
+      "external_tree_rss_mb": null,
+      "throughput_rows_s": 471858.8636295276
+    },
+    {
+      "python_peak_rss_mb": 215.01171875,
+      "max_child_peak_rss_mb": 0.0,
+      "engine": "pandas",
+      "seconds": 0.12382920700019895,
+      "rows": 73201,
+      "deaths": 6163,
+      "groups": 27,
+      "multiplier": 1,
+      "repetition": 2,
+      "external_tree_rss_mb": null,
+      "throughput_rows_s": 591144.866169436
+    },
+    {
+      "python_peak_rss_mb": 215.01171875,
+      "max_child_peak_rss_mb": 0.0,
+      "engine": "pandas",
+      "seconds": 0.14495834399986052,
+      "rows": 73201,
+      "deaths": 6163,
+      "groups": 27,
+      "multiplier": 1,
+      "repetition": 3,
+      "external_tree_rss_mb": null,
+      "throughput_rows_s": 504979.5546786216
+    },
+    {
+      "python_peak_rss_mb": 215.01171875,
+      "max_child_peak_rss_mb": 0.0,
+      "engine": "duckdb",
+      "seconds": 0.0815477030000693,
+      "rows": 73201,
+      "deaths": 6163,
+      "groups": 27,
+      "multiplier": 1,
+      "repetition": 1,
+      "external_tree_rss_mb": null,
+      "throughput_rows_s": 897646.3751521951
+    },
+    {
+      "python_peak_rss_mb": 215.01171875,
+      "max_child_peak_rss_mb": 0.0,
+      "engine": "duckdb",
+      "seconds": 0.07576108300008855,
+      "rows": 73201,
+      "deaths": 6163,
+      "groups": 27,
+      "multiplier": 1,
+      "repetition": 2,
+      "external_tree_rss_mb": null,
+      "throughput_rows_s": 966208.4687980826
+    },
+    {
+      "python_peak_rss_mb": 215.01171875,
+      "max_child_peak_rss_mb": 0.0,
+      "engine": "duckdb",
+      "seconds": 0.0674125999998978,
+      "rows": 73201,
+      "deaths": 6163,
+      "groups": 27,
+      "multiplier": 1,
+      "repetition": 3,
+      "external_tree_rss_mb": null,
+      "throughput_rows_s": 1085865.2536782587
+    },
+    {
+      "python_peak_rss_mb": 215.01171875,
+      "max_child_peak_rss_mb": 0.0,
+      "engine": "spark",
+      "seconds": 6.215609800000038,
+      "rows": 73201,
+      "deaths": 6163,
+      "groups": 27,
+      "multiplier": 1,
+      "repetition": 1,
+      "external_tree_rss_mb": null,
+      "throughput_rows_s": 11776.961932198437
+    },
+    {
+      "python_peak_rss_mb": 215.01171875,
+      "max_child_peak_rss_mb": 0.0,
+      "engine": "spark",
+      "seconds": 6.445383918000061,
+      "rows": 73201,
+      "deaths": 6163,
+      "groups": 27,
+      "multiplier": 1,
+      "repetition": 2,
+      "external_tree_rss_mb": null,
+      "throughput_rows_s": 11357.120216775782
+    },
+    {
+      "python_peak_rss_mb": 215.01171875,
+      "max_child_peak_rss_mb": 0.0,
+      "engine": "spark",
+      "seconds": 6.288903599999685,
+      "rows": 73201,
+      "deaths": 6163,
+      "groups": 27,
+      "multiplier": 1,
+      "repetition": 3,
+      "external_tree_rss_mb": null,
+      "throughput_rows_s": 11639.70775446513
+    },
+    {
+      "python_peak_rss_mb": 232.0625,
+      "max_child_peak_rss_mb": 0.0,
+      "engine": "pandas",
+      "seconds": 0.17097958400017887,
+      "rows": 292804,
+      "deaths": 24652,
+      "groups": 27,
+      "multiplier": 4,
+      "repetition": 1,
+      "external_tree_rss_mb": null,
+      "throughput_rows_s": 1712508.5530661584
+    },
+    {
+      "python_peak_rss_mb": 232.0625,
+      "max_child_peak_rss_mb": 0.0,
+      "engine": "pandas",
+      "seconds": 0.18135306700014553,
+      "rows": 292804,
+      "deaths": 24652,
+      "groups": 27,
+      "multiplier": 4,
+      "repetition": 2,
+      "external_tree_rss_mb": null,
+      "throughput_rows_s": 1614552.236934405
+    },
+    {
+      "python_peak_rss_mb": 232.0625,
+      "max_child_peak_rss_mb": 0.0,
+      "engine": "pandas",
+      "seconds": 0.16833968199989613,
+      "rows": 292804,
+      "deaths": 24652,
+      "groups": 27,
+      "multiplier": 4,
+      "repetition": 3,
+      "external_tree_rss_mb": null,
+      "throughput_rows_s": 1739364.1031125428
+    },
+    {
+      "python_peak_rss_mb": 232.0625,
+      "max_child_peak_rss_mb": 0.0,
+      "engine": "duckdb",
+      "seconds": 0.06980164700007663,
+      "rows": 292804,
+      "deaths": 24652,
+      "groups": 27,
+      "multiplier": 4,
+      "repetition": 1,
+      "external_tree_rss_mb": null,
+      "throughput_rows_s": 4194800.732992426
+    },
+    {
+      "python_peak_rss_mb": 232.0625,
+      "max_child_peak_rss_mb": 0.0,
+      "engine": "duckdb",
+      "seconds": 0.06953534300009778,
+      "rows": 292804,
+      "deaths": 24652,
+      "groups": 27,
+      "multiplier": 4,
+      "repetition": 2,
+      "external_tree_rss_mb": null,
+      "throughput_rows_s": 4210865.832639788
+    },
+    {
+      "python_peak_rss_mb": 232.0625,
+      "max_child_peak_rss_mb": 0.0,
+      "engine": "duckdb",
+      "seconds": 0.0795847619997403,
+      "rows": 292804,
+      "deaths": 24652,
+      "groups": 27,
+      "multiplier": 4,
+      "repetition": 3,
+      "external_tree_rss_mb": null,
+      "throughput_rows_s": 3679146.518035142
+    },
+    {
+      "python_peak_rss_mb": 232.0625,
+      "max_child_peak_rss_mb": 0.0,
+      "engine": "spark",
+      "seconds": 6.255765450000126,
+      "rows": 292804,
+      "deaths": 24652,
+      "groups": 27,
+      "multiplier": 4,
+      "repetition": 1,
+      "external_tree_rss_mb": null,
+      "throughput_rows_s": 46805.46327068482
+    },
+    {
+      "python_peak_rss_mb": 233.8125,
+      "max_child_peak_rss_mb": 0.0,
+      "engine": "spark",
+      "seconds": 6.2785137280002346,
+      "rows": 292804,
+      "deaths": 24652,
+      "groups": 27,
+      "multiplier": 4,
+      "repetition": 2,
+      "external_tree_rss_mb": null,
+      "throughput_rows_s": 46635.87796171958
+    },
+    {
+      "python_peak_rss_mb": 233.8125,
+      "max_child_peak_rss_mb": 0.0,
+      "engine": "spark",
+      "seconds": 6.249370698000348,
+      "rows": 292804,
+      "deaths": 24652,
+      "groups": 27,
+      "multiplier": 4,
+      "repetition": 3,
+      "external_tree_rss_mb": null,
+      "throughput_rows_s": 46853.35758585907
+    }
+  ],
+  "partition_pruning": [
+    {
+      "partitioned_by_uf": false,
+      "ce_rows": [
+        1502,
+        1502,
+        1502,
+        1502,
+        1502
+      ],
+      "seconds": [
+        0.016391973000281723,
+        0.012012082999717677,
+        0.007750968999971519,
+        0.006471940999745129,
+        0.006469537000157288
+      ],
+      "median_seconds": 0.007750968999971519,
+      "files_total": 1
+    },
+    {
+      "partitioned_by_uf": true,
+      "ce_rows": [
+        1502,
+        1502,
+        1502,
+        1502,
+        1502
+      ],
+      "seconds": [
+        0.005154577000212157,
+        0.0036709619998873677,
+        0.0038087850002739287,
+        0.003739933999895584,
+        0.003566627000054723
+      ],
+      "median_seconds": 0.003739933999895584,
+      "files_total": 27
+    }
+  ],
+  "method": "3 cold interpreter runs per engine/size; Spark startup included; warmed OS cache uncontrolled; input is real PRF repeated 4x, not independent observations; rusage self peak and separate maximum exited-child peak; concurrent process-tree RSS unavailable in sandbox; local only, no cluster scaling inference"
+}

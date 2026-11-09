@@ -1,0 +1,19 @@
+{
+  "origin": "user-supplied Mac terminal transcript",
+  "source_attachment": "Texto colado(20261106-211824).txt",
+  "source_sha256": "fa1d6ce0d70bc195e53d882b3fd22fc982d77db52ae44e8a61428001b989bea2",
+  "docker_build": "passed",
+  "image_tag": "ceara-lakehouse-airflow-pro:3.3.2-py312",
+  "image_short_id": "f75ba8f12209",
+  "build_seconds_reported_by_compose": 1639.8,
+  "project_venv_pip_check": "passed during image build",
+  "postgres_healthcheck": "healthy",
+  "api_startup": "failed: host port 8080 already allocated",
+  "scheduler_dag_execution": "not executed",
+  "port_fix": "host port configurable, default 18080; internal port remains 8080",
+  "port_fix_unit_tests": {
+    "passed": 5,
+    "seconds": 1.19
+  },
+  "runtime_retest_after_port_change": "pending on user Mac"
+}

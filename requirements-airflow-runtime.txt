@@ -1,0 +1,12 @@
+# Isolated project venv; Airflow itself stays in the official image environment.
+# Training/benchmark/dashboard libraries are unnecessary for this batch + dbt DAG.
+numpy==2.3.5
+pandas==2.2.3
+pyarrow==26.0.0
+deltalake==1.6.6
+pyspark==3.5.8
+setuptools==84.2.1
+duckdb==2.0.0
+dbt-duckdb==1.11.1
+requests==2.34.2
+gdown==6.5.1

@@ -1,0 +1,14 @@
+version: 2
+models:
+  - name: fct_accident
+    columns:
+      - name: id
+        data_tests: [unique, not_null]
+      - name: event_time
+        data_tests: [not_null]
+      - name: mortos
+        data_tests: [not_null]
+  - name: dim_date
+    columns:
+      - name: date_key
+        data_tests: [unique, not_null]
